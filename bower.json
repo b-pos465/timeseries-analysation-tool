@@ -1,0 +1,15 @@
+{
+  "name": "3d-viewer",
+  "description": "A 3D project.",
+  "version": "0.0.0",
+  "homepage": "https://github.com/angular/angular-seed",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4.0",
+    "plotlyjs": "plotly#~1.4.1",
+    "bootstrap": "~3.3.6",
+    "jquery": "~2.2.0",
+    "angular-bootstrap": "~1.1.1"
+  }
+}
