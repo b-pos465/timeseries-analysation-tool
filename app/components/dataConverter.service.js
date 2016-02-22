@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('myApp').service('DataConverterFrom', function () {
+angular.module('myApp').service('DataConverter', function () {
 
-    this.functionExpression = function (funcString, xCount, yCount) {
+    this.fromFunctionExpression = function (funcString, xCount, yCount) {
 
         var data = [];
 

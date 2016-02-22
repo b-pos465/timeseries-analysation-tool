@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('sandbox3dChart', function (DataConverterFrom, DefaultSurfaceService) {
+    .directive('sandbox3dChart', function (DataConverter, DefaultSurfaceService) {
 
         return {
             templateUrl: 'components/3dChart.html',
@@ -11,7 +11,7 @@ angular.module('myApp')
             },
             link: function (scope) {
 
-                DataConverterFrom.functionExpression('');
+                DataConverter.fromFunctionExpression('');
 
                 scope.surfaces = [{
                     meta: {
@@ -53,7 +53,7 @@ angular.module('myApp')
 
                     for (var i = 0; i < newSurfaces.length; i++) {
                         data.push({
-                            z: DataConverterFrom.functionExpression(newSurfaces[i].dataDefinition.specs.funcTerm,
+                            z: DataConverter.fromFunctionExpression(newSurfaces[i].dataDefinition.specs.funcTerm,
                                 newSurfaces[i].dataDefinition.specs.xCount,
                                 newSurfaces[i].dataDefinition.specs.yCount),
                             type: 'surface'
