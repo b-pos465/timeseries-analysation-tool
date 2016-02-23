@@ -4,7 +4,7 @@ angular.module('myApp')
     .directive('sandbox3dChart', function (DataConverter, DefaultSurfaceService) {
 
         return {
-            templateUrl: 'components/3dChart.html',
+            templateUrl: 'app/components/3dChart.html',
             restrict: 'E',
             scope: { // Isolate scope
 
