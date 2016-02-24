@@ -13,41 +13,30 @@
                     </div>
                 </div>
                 <div class="panel panel-default" style="margin-top: 40px">
-                    <div class="panel-heading">Definition</div>
-                    <div class="panel-body row" style="padding-left:30px; padding-right: 30px" ng-init="selection=true">
-                        <input ng-model="selection" id="func_version" type="checkbox" style="margin-right:20px;"><label for="func_version">Funktion</label><br>
-                        <input ng-disabled="true" ng-model="!selection" ng-click="selection=false" id="1d_version" type="checkbox" style="margin-right:20px;"><label for="1d_version">1D - Array</label>
-                        <hr>
-                        <div class="form-group" ng-if="selection">
+                    <div class="panel-heading">Definition <span
+                            class="pull-right">{{surface.dataDefinition.type}}</span></div>
+                    <div class="panel-body row" style="padding-left:30px; padding-right: 30px">
+                        <div class="form-group">
                             <label for="surface_func">Funktion: </label>
                             <input id="surface_func" func-validator class="form-control" type="text"
-                                   ng-model="surface.dataDefinition.specs.funcTerm" ng-model-options="{ debounce: { 'default': 1000}}">
-                            <label for="x_count" style="margin-top:10px">Schritte auf x-Achse <small>({{surface.dataDefinition.specs.xCount}})</small>:</label>
-                            <input id="x_count" type="range" min="0" max="30" step="1" ng-model="surface.dataDefinition.specs.xCount">
-                            <label for="y_count">Schritte auf y-Achse <small>({{surface.dataDefinition.specs.yCount}})</small>:</label>
-                            <input id="y_count" type="range" min="0" max="30" step="1" ng-model="surface.dataDefinition.specs.yCount">
-                        </div>
-                        <div class="from-group" ng-if="!selection">
-                            <label for="x_count_1d" style="margin-right: 20px">Schritte auf x-Achse</label><input id="x_count_1d" type="number" min="1" max="400"><br>
-                            <label for="y_count_1d" style="margin-right: 20px">Schritte auf y-Achse</label><input id="y_count_1d" type="number" min="1" max="400">
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel panel-heading">Analytics (do not work yet)</div>
-                    <div class="panel panel-body">
-                        <div class="row" style="padding-left:30px">
-                            <label for="dailyAverage">Zeige Tagesdurchschnitt:</label>
-                            <input id="dailyAverage" type="checkbox"
-                                   ng-model="surface.options.analytics.showDailyAverage">
-                        </div>
-                        <div class="row" style="padding-left:30px">
-                            <label for="yearlyAverage">Zeige Jahresdurchschnitt:</label>
-                            <input id="yearlyAverage" type="checkbox"
-                                   ng-model="surface.options.analytics.showYearlyAverage">
+                                   ng-model="surface.dataDefinition.specs.funcTerm"
+                                   ng-model-options="{ debounce: { 'default': 1000}}">
+                            <label for="selecDrop">x-Achse:</label>
+                                <span id="selecDrop" uib-dropdown>
+                                  <button uib-dropdown-toggle>
+                                      Einheit
+                                  </button>
+                                  <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
+                                      <li ng-repeat="choice in SelectingService.getPossibleSelections(surface.dataDefinition.specs.interval)">
+                                          <a href ng-click="surface.changeSelection(choice)">{{choice}}</a>
+                                      </li>
+                                  </ul>
+                                </span>
+                            <span>ausgewaehlt: {{surface.options.analytics.xSelection}}</span>
                         </div>
                     </div>
                 </div>
+
             </uib-tab>
             <uib-tab disable="true">
                 <uib-tab-heading ng-click="addSurface()">
@@ -55,41 +44,6 @@
                 </uib-tab-heading>
             </uib-tab>
         </uib-tabset>
-
-        <!--<h2>Options</h2>-->
-        <!--<div class="row" style="margin-top:20px">-->
-        <!--<div class="panel panel-default">-->
-        <!--<div class="panel-heading">Colorscale</div>-->
-        <!--<div class="panel-body row">-->
-        <!--<div class="col-md-6"><label for="slider1">Minimum: {{currentMin}}-->
-        <!--<input id="slider1" type="range" min="{{range[0]}}" max="{{currentMax}}"-->
-        <!--step="{{(currentMax - range[0]) / 100}}"-->
-        <!--ng-model="currentMin"-->
-        <!--style="width:300px"-->
-        <!--ng-change="setMin(currentMin)">-->
-        <!--</label>-->
-
-        <!--<label for="slider2">Maximum: {{currentMax}}-->
-        <!--<input id="slider2" type="range" min="{{currentMin}}" max="{{range[1]}}"-->
-        <!--step="{{(range[1] - currentMin) / 100}}"-->
-        <!--ng-model="currentMax"-->
-        <!--style="width:300px"-->
-        <!--ng-change="setMax(currentMax)">-->
-        <!--</label>-->
-        <!--</div>-->
-        <!--<div class="col-md-6">-->
-        <!--<div class="dropdown pull-right">-->
-        <!--<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Colorscale selection-->
-        <!--<span class="caret"></span></button>-->
-        <!--<ul class="dropdown-menu">-->
-        <!--<li ng-repeat="scale in possibleColorscales" ng-click="setColorscale(scale)"><a href="">{{scale}}</a>-->
-        <!--</li>-->
-        <!--</ul>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
     </div>
 </div>
 

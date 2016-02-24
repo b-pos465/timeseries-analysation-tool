@@ -1,23 +1,16 @@
 'use strict';
 
-angular.module('myApp').service('DataConverter', function () {
+angular.module('myApp').service('DataConverterTo1D', function () {
 
-    this.fromFunctionExpression = function (funcString, xCount, yCount) {
+    this.fromFunctionExpression = function (funcString, count) {
 
         var data = [];
-
-        for (var y = 0; y < yCount; y++) {
-            var temp = [];
-            for (var x = 0; x < xCount; x++) {
-                temp.push(eval(funcString));
-            }
-            data.push(temp);
+        for (var x = 0; x < count; x++) {
+            data.push(eval(funcString));
         }
 
         return data;
     };
 
-
     return this;
-
 });
