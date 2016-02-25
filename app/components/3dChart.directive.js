@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('sandbox3dChart', function (DataConverterTo1D, DefaultSurfaceService, SelectingService) {
+    .directive('sandbox3dChart', function (DataConverterTo1D, DefaultSurfaceService, SelectingService, AggregatingService) {
 
         return {
             templateUrl: 'app/components/3dChart.html',
@@ -12,6 +12,7 @@ angular.module('myApp')
             link: function (scope) {
 
                 scope.SelectingService = SelectingService;
+                scope.AggregatingService = AggregatingService;
 
                 scope.possibleColorscales = [
                     'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
@@ -21,7 +22,6 @@ angular.module('myApp')
                 scope.surfaces = [DefaultSurfaceService.getDefaultTimeseriesWrapper()];
 
                 scope.$watch('surfaces', function (newSurfaces) {
-
                     if (newSurfaces.length < 1) {
                         return;
                     }
@@ -33,15 +33,21 @@ angular.module('myApp')
                         var basicArray = DataConverterTo1D.fromFunctionExpression(newSurfaces[i].dataDefinition.specs.funcTerm,
                             newSurfaces[i].dataDefinition.specs.count);
 
-                        console.log(SelectingService.select(basicArray,
+                        var temp = SelectingService.select(basicArray,
                             newSurfaces[i].dataDefinition.specs.interval,
                             newSurfaces[i].dataDefinition.specs.startdate,
-                            newSurfaces[i].options.analytics.xSelection));
+                            newSurfaces[i].options.analytics.ySelection);
+
+
+                        temp = AggregatingService.aggregateX(temp, newSurfaces[i].options.analytics.xAggregation);
+
+                        if (newSurfaces[i].options.analytics.xAggregation !== 'Keine') {
+                            temp= [temp, temp];
+                        }
+                        console.log(temp);
+
                         data.push({
-                            z: SelectingService.select(basicArray,
-                                newSurfaces[i].dataDefinition.specs.interval,
-                                newSurfaces[i].dataDefinition.specs.startdate,
-                                newSurfaces[i].options.analytics.xSelection),
+                            z: temp,
                             type: 'surface'
                         });
                     }

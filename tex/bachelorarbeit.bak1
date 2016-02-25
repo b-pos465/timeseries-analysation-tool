@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\usepackage[ngerman]{babel}
+\usepackage[ansinew]{inputenc}
+
+\title{Bachelorarbeit Informatik}
+\author{Stefan Bechert}
+\date{\today}
+
+
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{Einleitung}
+\subsection{Motivation}
+\subsection{Zielsetzung}
+\subsection{Gliederung}
+\section{Grundlagen}
+\section{Anforderungsanalyse und Konzept}
+\section{Zusammenfassung und Auswertung}
+\end{document}

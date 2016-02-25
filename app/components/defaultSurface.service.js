@@ -10,7 +10,10 @@ angular.module('myApp').service('DefaultSurfaceService', function () {
 
         return {
             changeSelection: function(selecString) {
-                this.options.analytics.xSelection = selecString;
+                this.options.analytics.ySelection = selecString;
+            },
+            changeAggregation: function(aggString) {
+                this.options.analytics.xAggregation = aggString;
             },
             meta: {
                 name: 'Default ' + count,
@@ -21,13 +24,14 @@ angular.module('myApp').service('DefaultSurfaceService', function () {
                 specs: {
                     startdate: new Date('1970-01-01'),
                     funcTerm: 'x',
-                    interval: 200,
+                    interval: 1000,
                     count: 1000
                 }
             },
             options: {
                 analytics: {
-                    xSelection: 'original'
+                    ySelection: 'original',
+                    xAggregation: 'Keine'
                 }
             }
         }

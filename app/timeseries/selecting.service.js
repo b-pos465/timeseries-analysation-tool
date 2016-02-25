@@ -14,18 +14,18 @@ angular.module('myApp').service('SelectingService', function () {
     var dayInMSec = 24 * hourInMSec;
     var weekInMSec = 7 * dayInMSec;
 
-    this.possibleSelections = ['original', 'in Sec', 'in Min', 'in Hour', 'in Days', 'in Weeks'];
+    var possibleSelections = ['original', 'in Sekunden', 'in Minuten', 'in Stunden', 'in Tagen', 'in Wochen'];
     this.getPossibleSelections = function(stepLength) {
         if (stepLength < secInMSec) {
-            return this.possibleSelections;
+            return possibleSelections;
         } else if(stepLength < minuteInMSec) {
-            return [this.possibleSelections[0]].concat(this.possibleSelections.slice(2));
+            return [possibleSelections[0]].concat(possibleSelections.slice(2));
         } else if(stepLength < hourInMSec) {
-            return [this.possibleSelections[0]].concat(this.possibleSelections.slice(3));
+            return [possibleSelections[0]].concat(possibleSelections.slice(3));
         } else if(stepLength < dayInMSec) {
-            return [this.possibleSelections[0]].concat(this.possibleSelections.slice(4));
+            return [possibleSelections[0]].concat(possibleSelections.slice(4));
         } else if(stepLength < weekInMSec) {
-            return [this.possibleSelections[0]].concat(this.possibleSelections.slice(5));
+            return [possibleSelections[0]].concat(possibleSelections.slice(5));
         }
     };
     var FILL_VALUE = 0;
@@ -76,9 +76,9 @@ angular.module('myApp').service('SelectingService', function () {
 
     this.select = function(values, stepLength, startdate, selecString) {
 
-        for (var i = 0; i < this.possibleSelections.length; i++) {
-            if(selecString === this.possibleSelections[i]) {
-                return this.possibleFunctions[i](values, stepLength, startdate);
+        for (var i = 0; i < possibleSelections.length; i++) {
+            if(selecString === possibleSelections[i]) {
+                return possibleFunctions[i](values, stepLength, startdate);
             }
         }
     };
@@ -117,7 +117,7 @@ angular.module('myApp').service('SelectingService', function () {
         return [values, values];
     };
 
-    this.possibleFunctions = [this.getOriginal, this.getSeconds, this.getMinutes, this.getHours, this.getDays, this.getWeek];
+    var possibleFunctions = [this.getOriginal, this.getSeconds, this.getMinutes, this.getHours, this.getDays, this.getWeek];
 
     return this;
 

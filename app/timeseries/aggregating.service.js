@@ -11,6 +11,18 @@
  */
 angular.module('myApp').service('AggregatingService', function () {
 
+    this.possibleAggregations = ['Keine', 'Summe', 'Durchschnitt', 'Maximum', 'Minimum'];
+
+    this.aggregateX = function(values, aggString) {
+      for(var i = 0; i < this.possibleAggregations.length; i++) {
+          if(this.possibleAggregations[i] === aggString) {
+
+              return possibleFunctions[i](values);
+          }
+      }
+    };
+
+
     /**
      * Sums all values in one interval up.
      *
@@ -21,12 +33,14 @@ angular.module('myApp').service('AggregatingService', function () {
 
         var result = [];
         for (var i = 0; i < values.length; i++) {
-            result.push(values.reduce(function (prev, curValue) {
+            result.push(values[i].reduce(function (prev, curValue) {
                 return prev + curValue;
             }));
         }
         return result;
     };
+
+    var sum = this.sum;
 
     /**
      * Builds the average of all values in one interval.
@@ -37,7 +51,7 @@ angular.module('myApp').service('AggregatingService', function () {
      */
     this.avg = function (values) {
 
-        var temp = this.sum(values);
+        var temp = sum(values);
         for (var i = 0; i < temp.length; i++) {
             temp[i] = temp[i] / values[i].length; // divide each sum by the length of the original array
         }
@@ -86,6 +100,8 @@ angular.module('myApp').service('AggregatingService', function () {
 
         return result;
     };
+
+    var possibleFunctions = [function(values){return values;}, this.sum, this.avg, this.max, this.min];
 
     return this;
 
