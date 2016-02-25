@@ -1,20 +1,14 @@
 'use strict';
 
-angular.module('myApp').service('DefaultSurfaceService', function () {
+angular.module('myApp').service('DefaultTimeseriesDefinition', function () {
 
     var count = 0;
 
-    this.getDefaultTimeseriesWrapper = function () {
+    this.getDefaultFunctionBasedTimeseries = function () {
 
         count++;
 
         return {
-            changeSelection: function(selecString) {
-                this.options.analytics.ySelection = selecString;
-            },
-            changeAggregation: function(aggString) {
-                this.options.analytics.xAggregation = aggString;
-            },
             meta: {
                 name: 'Default ' + count,
                 active: true
@@ -27,15 +21,11 @@ angular.module('myApp').service('DefaultSurfaceService', function () {
                     interval: 1000,
                     count: 1000
                 }
-            },
-            options: {
-                analytics: {
-                    ySelection: 'original',
-                    xAggregation: 'Keine'
-                }
             }
         }
     };
+
+    //TODO other data input types
 
     return this;
 });
