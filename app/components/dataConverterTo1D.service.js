@@ -2,14 +2,14 @@
 
 angular.module('myApp').service('DataConverterTo1D', function () {
 
-    this.fromFunctionExpression = function (funcString, count) {
+    this.fromFunctionExpression = function (surface) {
 
         var data = [];
-        for (var x = 0; x < count; x++) {
-            data.push(eval(funcString));
+        for (var x = 0; x < surface.dataDefinition.specs.count; x++) {
+            data.push(eval(surface.dataDefinition.specs.funcTerm));
         }
 
-        return data;
+        return new Timeseries(surface.dataDefinition.specs.startdate,surface.dataDefinition.specs.stepLength,data);
     };
 
     return this;

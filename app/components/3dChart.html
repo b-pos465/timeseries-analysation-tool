@@ -1,4 +1,5 @@
 <div class="row">
+    <button class="btn btn-default" ng-click="render()">Render!</button>
     <div id="plotly" class="col-md-6"></div>
     <div class="col-md-4">
         <uib-tabset>
@@ -21,38 +22,9 @@
                             <input id="surface_func" func-validator class="form-control" type="text"
                                    ng-model="surface.dataDefinition.specs.funcTerm"
                                    ng-model-options="{ debounce: { 'default': 1000}}">
-                            <div style="margin-top:5px">
-                                <label for="selecDrop">y-Achse:</label>
-                                <span id="selecDrop" uib-dropdown>
-                                  <button class="btn btn-default" uib-dropdown-toggle>
-                                      Einheit
-                                  </button>
-                                  <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
-                                      <li ng-repeat="choice in SelectingService.getPossibleSelections(surface.dataDefinition.specs.interval)">
-                                          <a href ng-click="surface.changeSelection(choice)">{{choice}}</a>
-                                      </li>
-                                  </ul>
-                                </span>
-                                <span class="pull-right">Ausgewählt: {{surface.options.analytics.ySelection}}</span>
-                            </div>
-                            <div style="margin-top:5px">
-                                <label for="aggDrop">x-Achse:</label>
-                                <span id="aggDrop" uib-dropdown>
-                                  <button class="btn btn-default" uib-dropdown-toggle>
-                                      Aggregation
-                                  </button>
-                                  <ul uib-dropdown-menu aria-labelledby="simple-dropdown">
-                                      <li ng-repeat="choice in AggregatingService.possibleAggregations">
-                                          <a href ng-click="surface.changeAggregation(choice)">{{choice}}</a>
-                                      </li>
-                                  </ul>
-                                </span>
-                                <span class="pull-right">Ausgewählt: {{surface.options.analytics.xAggregation}}</span>
-                            </div>
                         </div>
                     </div>
                 </div>
-
             </uib-tab>
             <uib-tab disable="true">
                 <uib-tab-heading ng-click="addSurface()">

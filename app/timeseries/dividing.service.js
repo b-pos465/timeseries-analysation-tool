@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * This service provides selection functions for the timeseries plotter.
+ * This service provides diving functions for the Timeseries object.
  */
-angular.module('myApp').service('SelectingService', function () {
+angular.module('myApp').service('DividingService', function () {
 
     /*
      Nothing smaller then milli seconds are supported.
@@ -14,23 +14,7 @@ angular.module('myApp').service('SelectingService', function () {
     var dayInMSec = 24 * hourInMSec;
     var weekInMSec = 7 * dayInMSec;
 
-    var possibleSelections = ['original', 'in Sekunden', 'in Minuten', 'in Stunden', 'in Tagen', 'in Wochen'];
-    this.getPossibleSelections = function(stepLength) {
-        if (stepLength < secInMSec) {
-            return possibleSelections;
-        } else if(stepLength < minuteInMSec) {
-            return [possibleSelections[0]].concat(possibleSelections.slice(2));
-        } else if(stepLength < hourInMSec) {
-            return [possibleSelections[0]].concat(possibleSelections.slice(3));
-        } else if(stepLength < dayInMSec) {
-            return [possibleSelections[0]].concat(possibleSelections.slice(4));
-        } else if(stepLength < weekInMSec) {
-            return [possibleSelections[0]].concat(possibleSelections.slice(5));
-        }
-    };
     var FILL_VALUE = 0;
-
-
 
     function cutInSameSize(values, interval, offset) {
         var result = [];
@@ -38,7 +22,7 @@ angular.module('myApp').service('SelectingService', function () {
         result.push(values.slice(0, interval - offset));
         for (var k = interval - offset; k < values.length; k += interval) {
             /*
-             If the last clice is smaller then interval we need a different logic.
+             If the last slice is smaller then interval we need a different logic.
              Right now the last slice will be saved as well.
              Alternatively we could add interpolated values or cut it completely.
              */
@@ -74,15 +58,6 @@ angular.module('myApp').service('SelectingService', function () {
         return values;
     }
 
-    this.select = function(values, stepLength, startdate, selecString) {
-
-        for (var i = 0; i < possibleSelections.length; i++) {
-            if(selecString === possibleSelections[i]) {
-                return possibleFunctions[i](values, stepLength, startdate);
-            }
-        }
-    };
-
     this.getSeconds = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % secInMSec;
 
@@ -112,12 +87,6 @@ angular.module('myApp').service('SelectingService', function () {
 
         return fillValues(cutInSameSize(values, weekInMSec / stepLength, offset), stepLength, weekInMSec);
     };
-
-    this.getOriginal = function (values) {
-        return [values, values];
-    };
-
-    var possibleFunctions = [this.getOriginal, this.getSeconds, this.getMinutes, this.getHours, this.getDays, this.getWeek];
 
     return this;
 

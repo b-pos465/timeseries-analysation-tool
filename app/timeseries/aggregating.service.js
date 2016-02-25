@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * This service provides aggregate functions for the timeseries plotter.
- * Each of this function works on [[float], [float], ..] arrays saved in a TimeseriesSelection object.
+ * This service provides aggregate functions for the Timeseries class.
+ * Each of these functions work on a sub-array of a Timeseries object.
  * Provided functions are:
  *  - sum
  *  - avg
@@ -11,33 +11,16 @@
  */
 angular.module('myApp').service('AggregatingService', function () {
 
-    this.possibleAggregations = ['Keine', 'Summe', 'Durchschnitt', 'Maximum', 'Minimum'];
-
-    this.aggregateX = function(values, aggString) {
-      for(var i = 0; i < this.possibleAggregations.length; i++) {
-          if(this.possibleAggregations[i] === aggString) {
-
-              return possibleFunctions[i](values);
-          }
-      }
-    };
-
-
     /**
      * Sums all values in one interval up.
      *
-     * @param values - [[float], [float], ..] values of a TimeseriesSelection object.
-     * @returns [float]
+     * @param values - [number] values of a sub-array of a Timeseries object.
+     * @returns number
      */
     this.sum = function (values) {
-
-        var result = [];
-        for (var i = 0; i < values.length; i++) {
-            result.push(values[i].reduce(function (prev, curValue) {
-                return prev + curValue;
-            }));
-        }
-        return result;
+        return values.reduce(function (prev, curValue) {
+            return prev + curValue;
+        });
     };
 
     var sum = this.sum;
@@ -46,63 +29,49 @@ angular.module('myApp').service('AggregatingService', function () {
      * Builds the average of all values in one interval.
      * Uses the sum function.
      *
-     * @param values - [[float], [float], ..] values of a TimeseriesSelection object.
-     * @returns [float]
+     * @param values - [number] values of a sub-array of a Timeseries object.
+     * @returns number
      */
     this.avg = function (values) {
 
-        var temp = sum(values);
-        for (var i = 0; i < temp.length; i++) {
-            temp[i] = temp[i] / values[i].length; // divide each sum by the length of the original array
-        }
-
-        return temp;
+        return sum(values) / values.length;
     };
 
     /**
      * Determines the maximal element in each interval.
      *
-     * @param values - [[float], [float], ..] values of a TimeseriesSelection object.
-     * @returns [float]
+     * @param values - [number] values of a sub-array of a Timeseries object.
+     * @returns number
      */
     this.max = function (values) {
-        var result = [];
-        for (var i = 0; i < values.length; i++) {
-            var max = values[i][0];
-            for (var j = 1; j < values[i].length; j++) {
-                if(values[i][j] > max) {
-                    max = values[i][j];
-                }
-            }
-            result.push(max);
-        }
 
-        return result;
+        var max = values[0];
+        for (var i = 0; i < values.length; i++) {
+            if (values[i] > max) {
+                max = values[i];
+            }
+        }
+        return max;
     };
 
     /**
      * Determines the minimal element in each interval.
      *
-     * @param values - [[float], [float], ..] values of a TimeseriesSelection object.
-     * @returns [float]
+     * @param values - [number] values of a sub-array of a Timeseries object.
+     * @returns number
      */
     this.min = function (values) {
-        var result = [];
+        var min = values[0];
         for (var i = 0; i < values.length; i++) {
-            var min = values[i][0];
-            for (var j = 1; j < values[i].length; j++) {
-                if(values[i][j] < min) {
-                    min = values[i][j];
-                }
+            if (values[i] < min) {
+                min = values[i];
             }
-            result.push(max);
         }
 
-        return result;
+        return min;
     };
-
-    var possibleFunctions = [function(values){return values;}, this.sum, this.avg, this.max, this.min];
 
     return this;
 
-});
+})
+;
