@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('sandbox3dChart', function (DataConverterTo1D, DefaultTimeseriesDefinition, AggregatingService) {
+    .directive('sandbox3dChart', function (DataConverterTo1D, DefaultTimeseriesDefinition, DividingService, AggregatingService) {
 
         return {
             templateUrl: 'app/components/3dChart.html',
@@ -40,8 +40,14 @@ angular.module('myApp')
                     for (var i = 0; i < newSurfaces.length; i++) {
 
                         scope.timeseries.push(DataConverterTo1D.fromFunctionExpression(newSurfaces[i]));
-                        scope.timeseries[0].aggregate(AggregatingService.sum);
-                        console.log(scope.timeseries[0]);
+                        //scope.timeseries[0].aggregate(AggregatingService.avg);
+                        //console.log(scope.timeseries[0]);
+                        scope.timeseries[0].divide(DividingService.getDays);
+                        console.log(scope.timeseries[0].values);
+                        scope.timeseries[0].divide(DividingService.getHours);
+                        console.log(scope.timeseries[0].values);
+                        scope.timeseries[0].aggregate(AggregatingService.avg);
+                        console.log(scope.timeseries[0].values);
                     }
                 }, true);
 

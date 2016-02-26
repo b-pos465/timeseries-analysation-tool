@@ -13,7 +13,7 @@ function Timeseries(startdate, stepLength, values) {
     this.depth = 2;
     this.startdate = startdate;
     this.stepLength = stepLength;
-    this.values = [[[values, values], [values]]];
+    this.values = values;
 
     /**
      * Cuts the most inner sub-arrays in parts by a
@@ -24,7 +24,10 @@ function Timeseries(startdate, stepLength, values) {
     this.divide = function (divFunc) {
         this.depth++;
 
-        this.funcMostInnerArrays(this.values, this.values, divFunc, 0);
+        var temp = this.funcMostInnerArrays(this.values, this.values, divFunc, 0);
+        if( angular.isDefined(temp)) {
+            this.values = temp;
+        }
 
     };
 
@@ -33,12 +36,13 @@ function Timeseries(startdate, stepLength, values) {
      *
      * The AggregatingService provides pre defined functions.
      *
-     * @param aggFunc - The function which will be called on TimeseriesSelection.values.
-     * @returns [float]
      */
     this.aggregate = function (aggFunc) {
         this.depth--;
-        this.funcMostInnerArrays(this.values, this.values, aggFunc, 0);
+        var temp = this.funcMostInnerArrays(this.values, this.values, aggFunc, 0, true);
+        if( angular.isDefined(temp)) {
+            this.values = temp;
+        }
     };
 
     /**
@@ -50,21 +54,34 @@ function Timeseries(startdate, stepLength, values) {
     };
 
     /**
-     * This function searches for the most inner arrays and uses the aggFunc on this array.
-     * then this array will be replaces with the result of the aggFunc. It should work with
+     * This function searches for the most inner arrays and uses the func on this array.
+     * then this array will be replaces with the result of the func. It should work with
      * the dividing functions as well as long as they return an array like this: [[],[], ...].
      *
      * @param parent - parent array reference to replace the array.
      * @param arr - current array being processed.
-     * @param aggFunc - func to use on most inner arrays.
+     * @param func - func to use on most inner arrays.
      * @param i - index of the sub-array in the parent array; for replacing.
+     * @param isAgg - boolean whether func is an aggFunc or not.
+     *
+     * @return if inner array is outer array return value.
      */
-    this.funcMostInnerArrays = function (parent, arr, aggFunc, i) {
+    this.funcMostInnerArrays = function (parent, arr, func, i, isAgg) {
         if (angular.isArray(arr) && !angular.isArray(arr[0])) { //found most inner array
-            parent[i] = aggFunc(arr);
+
+            var oldStep = this.stepLength;
+            if(isAgg) {
+                this.stepLength *= arr.length;
+            }
+
+            if(parent === arr) {
+                return func(arr, oldStep, this.startdate);
+            }
+            parent[i] = func(arr, oldStep, this.startdate);
+
         } else {
             for (var t = 0; t < arr.length; t++) {
-                this.funcMostInnerArrays(arr, arr[t], aggFunc, t);
+                this.funcMostInnerArrays(arr, arr[t], func, t, isAgg);
             }
         }
     }

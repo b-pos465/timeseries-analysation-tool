@@ -14,7 +14,6 @@ angular.module('myApp').service('DividingService', function () {
     var dayInMSec = 24 * hourInMSec;
     var weekInMSec = 7 * dayInMSec;
 
-    var FILL_VALUE = 0;
 
     function cutInSameSize(values, interval, offset) {
         var result = [];
@@ -36,18 +35,18 @@ angular.module('myApp').service('DividingService', function () {
         return result;
     }
 
-    function fillValues(values, stepLength, msec) {
+    this.fillValues = function (values, stepLength, msec, fillValue) {
         var diff = msec / stepLength - values[0].length;
         if (diff != 0) {
-            for(var i = 0; i < diff; i++) {
-                values[0].push(FILL_VALUE);
+            for (var i = 0; i < diff; i++) {
+                values[0].push(fillValue);
             }
         }
 
         diff = msec / stepLength - values[values.length - 1].length;
         if (diff != 0) {
-            for(i = 0; i < diff; i++) {
-                values[values.length - 1].push(FILL_VALUE);
+            for (i = 0; i < diff; i++) {
+                values[values.length - 1].push(fillValue);
             }
         }
 
@@ -56,38 +55,49 @@ angular.module('myApp').service('DividingService', function () {
         }
 
         return values;
-    }
+    };
 
     this.getSeconds = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % secInMSec;
 
-        return fillValues(cutInSameSize(values, secInMSec / stepLength, offset), stepLength, secInMSec);
+        if (!angular.isArray(values)) {
+            return [values];
+        }
+
+        return cutInSameSize(values, secInMSec / stepLength, offset);
     };
 
     this.getMinutes = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % minuteInMSec;
 
-        return fillValues(cutInSameSize(values, minuteInMSec / stepLength, offset), stepLength, minuteInMSec);
+        if (!angular.isArray(values)) {
+            return [values];
+        }
+
+        return cutInSameSize(values, minuteInMSec / stepLength, offset);
     };
 
     this.getHours = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % hourInMSec;
 
-        return fillValues(cutInSameSize(values, hourInMSec / stepLength, offset), stepLength, hourInMSec);
+        if (!angular.isArray(values)) {
+            return [values];
+        }
+
+        return cutInSameSize(values, hourInMSec / stepLength, offset);
     };
 
     this.getDays = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % dayInMSec;
 
-        return fillValues(cutInSameSize(values, dayInMSec / stepLength, offset), stepLength, dayInMSec);
+        return cutInSameSize(values, dayInMSec / stepLength, offset);
     };
 
     this.getWeek = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % weekInMSec;
 
-        return fillValues(cutInSameSize(values, weekInMSec / stepLength, offset), stepLength, weekInMSec);
+        return cutInSameSize(values, weekInMSec / stepLength, offset);
     };
 
     return this;
-
 });

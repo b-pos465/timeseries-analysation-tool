@@ -2,7 +2,7 @@
   "name": "3d-viewer",
   "description": "A 3D project.",
   "version": "0.0.0",
-  "homepage": "https://github.com/angular/angular-seed",
+  "homepage": "",
   "license": "MIT",
   "private": true,
   "dependencies": {
