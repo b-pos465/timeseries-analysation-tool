@@ -36,19 +36,26 @@ angular.module('myApp')
                         return;
                     }
                     scope.timeseries = [];
+                    var data = [];
 
                     for (var i = 0; i < newSurfaces.length; i++) {
 
                         scope.timeseries.push(DataConverterTo1D.fromFunctionExpression(newSurfaces[i]));
-                        //scope.timeseries[0].aggregate(AggregatingService.avg);
-                        //console.log(scope.timeseries[0]);
                         scope.timeseries[0].divide(DividingService.getDays);
-                        console.log(scope.timeseries[0].values);
+
                         scope.timeseries[0].divide(DividingService.getHours);
-                        console.log(scope.timeseries[0].values);
+                        //console.log(scope.timeseries[0].values);
                         scope.timeseries[0].aggregate(AggregatingService.avg);
+                        //console.log(scope.timeseries[0].values);
+
+                        data.push({
+                            z: scope.timeseries[0].values,
+                            type: 'surface'
+                        });
                         console.log(scope.timeseries[0].values);
                     }
+
+                    scope.render(data);
                 }, true);
 
                 scope.addSurface = function () {
@@ -59,9 +66,9 @@ angular.module('myApp')
                     Plotly.restyle('plotly', {colorscale: name});
                 };
 
-                scope.render= function() {
+                scope.render= function(data) {
 
-                    Plotly.newPlot('plotly', null, LAYOUT); // TODO
+                    Plotly.newPlot('plotly', data, LAYOUT); // TODO
                 }
             }
         };

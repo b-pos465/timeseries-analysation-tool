@@ -1,8 +1,9 @@
 \documentclass[12pt]{article}
 
 \usepackage[ngerman]{babel}
-
 \usepackage[utf8]{inputenc}
+\usepackage{amssymb} 
+\usepackage{amsmath}
 
 \title{Bachelorarbeit Informatik}
 \author{Stefan Bechert}
@@ -37,7 +38,13 @@
 	\subsection{Plotly}
 		Wieso Plotly? Grundlagen?
 	\subsection{Zeitreihen, Repräsentationen und Operationen}
-		\subsubsection{Definition}
+		\subsubsection{Definition Array}
+		\label{sec: def}
+		Sei $n \in \mathbb{N}$. Ein \textbf{Array} $arr = [a_{0}, a_{1}, ..., a_{n-1}]$ ist eine endliche Abfolge von Werten, die ueber ihren Index $i$ referenziert werden. Es gilt $arr[i] = a_{i}$, wobei $i \in \{0,1, ..., n-1\}$. \\[0.2cm]
+		Die \textbf{Länge} eines Arrays $|arr|$ entspricht der Anzahl der Werte in $arr$, also $|arr| = n$.\\[0.4cm]
+		Sei $arr$ ein Array. Falls ein $i \in \{0,1, ..., |arr| - 1\}$ existiert sodass $arr[i]$ selbst ein Array ist so heisst $arr$ \textbf{geschachtelt} und $arr[i]$ Unterarray von $arr$. Ansonsten heisst $arr$ \textbf{nicht geschachtelt}.\\[0.4cm]
+		Sei $arr$ ein Array. Die Menge $\boldsymbol{\chi(arr)}$ ist die Menge aller Arrays in $arr$ und deren rekursiv erreichbaren Unterarrays, die selbst nicht geschachtelt sind. (Eigentlich muesste man das besser ausdruecken)
+		\subsubsection{Definition Zeitreihe}
 		\label{sec: def}
 		Eine \textbf{äquidistante Zeitreihe} ist ein Tripel 
 			\begin{equation}
@@ -50,7 +57,7 @@
 		ein Array aus n Kennwerten darstellt.
 		$i$ beschreibt den zeitlichen Abstand zwischen zwei Kennwerten in Millisekunden und s repräsentiert den Starzeitpunkt der Zeitreihe in 		Millisekunden seit dem 01.01.1970.
 		\subsubsection{Repräsentationen}
-		Die Definition in \ref{sec: def} gilt im folgenden als die initiale Repräsentation einer Zeitreihe in der Anwendung. (Passt hier eig 			nicht, sollte eher zu Implementierung)
+		Die Definition in \ref{sec: def} gilt im folgenden als die initiale Repräsentation einer Zeitreihe in der Anwendung. (Passt hier eig nicht, sollte eher zu Implementierung)
 		
 			\paragraph{2D - Repräsentation}
 				Die Repräsentation nach \ref{sec: def} ist eine 2-dimensionale Darstellung der Kennzahlen, da nur ein Index jede Kennzahl 						eindeutig referenziert.
@@ -87,11 +94,43 @@
 		
 			\paragraph{Unterteilung}
 				$\forall n \geq 2$ gilt:\\
-				Sei $D^{n} = (V, i, s)$ eine Zeitreihe in nD-Repraesentation.\\[0.3cm]
+				Sei $D^{n} = (V, i, s)$ eine Zeitreihe in nD-Repraesentation.\\[0.0cm]
 				Eine Unterteilung $\delta_{n}$ ist eine Abbildung 
 				\begin{equation}
 					\delta_{n}: K^{n} \rightarrow K^{n+1}.
+				\end{equation}\\[0.3cm]
+				Sei $D^{n} = (V, i, s)$ homogen und $\delta(D^{n}) = D^{n+1} = (V', i, s)$.
+				Eine Unterteilung heisst \textbf{homogen} falls ein $n \in \mathbb{N}$ exisitiert, sodass
+				\begin{equation}
+					\forall arr \in \chi(V): |arr| = n.
 				\end{equation}
+				
+			\paragraph{Aggregationssregeln}
+				Sei $D^{n} = (V, i, s)$ eine Zeitreihe in nD-Repraesentation.\\[0.3cm]
+			
+				\begin{enumerate}
+					\item{Eine Zeitreihe ist genau dann aggregierbar, wenn $n \geq 3$.}
+					\item{Sei $D^{n} = (V, i, s)$ homogen. Fuer 
+						\begin{equation}
+							\phi(D^{n}) = D^{n-1} = (V', i', s)
+						\end{equation}
+						gilt 
+						\begin{equation}
+							i' = |MIA(D^{n})|*i
+						\end{equation}
+						.
+					}
+					\item{Sei $D^{n} = (V, i, s)$ inhomogen. Fuer
+						\begin{equation}
+							\phi(D^{n}) = D^{n-1} = (V', i', s)
+						\end{equation}
+						gilt 
+						\begin{equation}
+							i' = [l_{0}, l_{1}, ..., l_{|MIA| - 1}]
+						\end{equation}
+						wobei $i'[0] = l_{0} = |MIA[0]|$.
+					}
+				\end{enumerate}
 				
 			\paragraph{Aggregation}
 				$\forall n \geq 3$ gilt:\\
