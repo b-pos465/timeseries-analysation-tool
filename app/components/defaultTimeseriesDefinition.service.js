@@ -19,7 +19,7 @@ angular.module('myApp').service('DefaultTimeseriesDefinition', function () {
                     startdate: new Date('1970-01-01'),
                     funcTerm: 'x',
                     stepLength: 60000,
-                    count: 241
+                    count: 400
                 }
             }
         }

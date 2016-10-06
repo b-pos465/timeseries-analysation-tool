@@ -1,38 +1,6 @@
 <div class="row">
-    <button class="btn btn-default" ng-click="render()">Render!</button>
     <div id="plotly" class="col-md-6"></div>
-    <div class="col-md-4">
-        <uib-tabset>
-            <uib-tab ng-repeat="surface in surfaces" active="surface.meta.active" heading="{{surface.meta.name}}">
-                <div class="panel panel-default" style="margin-top: 40px">
-                    <div class="panel-heading">Meta</div>
-                    <div class="panel-body row" style="padding-left:30px; padding-right: 30px">
-                        <div class="form-group">
-                            <label for="surface_name">Name: </label>
-                            <input id="surface_name" class="form-control" type="text" ng-model="surface.meta.name">
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default" style="margin-top: 40px">
-                    <div class="panel-heading">Definition <span
-                            class="pull-right">{{surface.dataDefinition.type}}</span></div>
-                    <div class="panel-body row" style="padding-left:30px; padding-right: 30px">
-                        <div class="form-group">
-                            <label for="surface_func">Funktion: </label>
-                            <input id="surface_func" func-validator class="form-control" type="text"
-                                   ng-model="surface.dataDefinition.specs.funcTerm"
-                                   ng-model-options="{ debounce: { 'default': 1000}}">
-                        </div>
-                    </div>
-                </div>
-            </uib-tab>
-            <uib-tab disable="true">
-                <uib-tab-heading ng-click="addSurface()">
-                    <i class="fa fa-plus"></i>
-                </uib-tab-heading>
-            </uib-tab>
-        </uib-tabset>
-    </div>
+
 </div>
 
 
