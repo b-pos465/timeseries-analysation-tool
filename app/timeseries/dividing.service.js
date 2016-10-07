@@ -27,9 +27,10 @@ angular.module('myApp').service('DividingService', function () {
              Right now the last slice will be saved as well.
              Alternatively we could add interpolated values or cut it completely.
              */
-            if (k += interval < values.length) {
-                result.push(values.slice(k, k + interval));
+            if (k + interval <= values.length) {
+                result.push(values.slice(k , k + interval ));
             } else {
+                console.log('Rest aufgetreten!');
                 result.push(values.slice(k));
             }
 
@@ -71,6 +72,7 @@ angular.module('myApp').service('DividingService', function () {
 
     this.getMinutes = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % minuteInMSec;
+        console.log(values, offset, minuteInMSec / stepLength);
 
         if (!angular.isArray(values)) {
             return [values];
@@ -103,10 +105,12 @@ angular.module('myApp').service('DividingService', function () {
 
 
     this.possibleResolutions = [{
-        text: 'Millisekunden',
-        value: 1,
+        text: 'Original',
+        value: null,
         calc: function (values) {
-            return values;
+            return _.map(values, function(i) {
+                return [i];
+            });
         }
     }, {
         text: 'Sekunden',

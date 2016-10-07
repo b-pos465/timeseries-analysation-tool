@@ -9,10 +9,15 @@ angular.module('myApp')
             scope: {},
             link: function (scope) {
 
-                scope.possibleColorscales = [
-                    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
-                    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
-                ];
+                //scope.possibleColorscales = [
+                //    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
+                //    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
+                //];
+                //scope.setColorscale = function (name) {
+                //    Plotly.restyle('plotly', {colorscale: name});
+                //};
+
+
                 scope.possibleResolutions = DividingService.possibleResolutions;
                 scope.possibleAggregations = AggregatingService.possibleAggregations;
 
@@ -35,52 +40,51 @@ angular.module('myApp')
                 };
 
                 scope.surface = DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries();
-
                 scope.options = {};
 
-                function reset () {
-                    LAYOUT.scene.yaxis = LAYOUT.scene.xaxis = {};
-                }
+                scope.$watch('options', function (newOpt, oldOpt) {
 
-                scope.$watch('options', function (newOpt) {
+                    console.log(newOpt);
 
-                    console.log(newOpt, Timeseries.SAVE)
+                    var resY = undefined, agg = undefined, resX = undefined;
+
                     if (!newOpt || !Timeseries.SAVE) {
                         return;
                     }
-
                     reset();
 
+                    if (newOpt.yaxis !== oldOpt.yaxis) {
+                        newOpt.xaxis = null;
+                    }
                     if (newOpt.yaxis) {
-                        for(var i = 0; i < scope.possibleResolutions.length; i++) {
+                        for (var i = 0; i < scope.possibleResolutions.length; i++) {
                             if (scope.possibleResolutions[i].text === newOpt.yaxis) {
-                                var resY = scope.possibleResolutions[i];
+                                resY = scope.possibleResolutions[i];
                             }
                         }
                     }
-
                     if (newOpt.xaxis && newOpt.agg) {
 
                         // get aggregation type
-                        for(i = 0; i < scope.possibleAggregations.length; i++) {
+                        for (i = 0; i < scope.possibleAggregations.length; i++) {
                             if (scope.possibleAggregations[i].text === newOpt.agg) {
-                                var agg = scope.possibleAggregations[i];
+                                agg = scope.possibleAggregations[i];
                             }
                         }
 
                         // get xaxis resolution
-                        for(i = 0; i < scope.possibleResolutions.length; i++) {
+                        for (i = 0; i < scope.possibleResolutions.length; i++) {
                             if (scope.possibleResolutions[i].text === newOpt.xaxis) {
-                                var resX = scope.possibleResolutions[i];
+                                resX = scope.possibleResolutions[i];
                             }
                         }
                     }
-
-
                     Timeseries.reset();
+                    console.log(Timeseries.values);
+                    console.log(resY, agg, resX);
 
-                    if (resY && agg && resX) {
-                        console.log(1);
+                    if (resY && resX && agg ) {
+
                         Timeseries.divide(resY.calc);
                         console.log(angular.copy(Timeseries.values));
                         Timeseries.divide(resX.calc);
@@ -95,8 +99,8 @@ angular.module('myApp')
                             title: resY.text
                         };
                     } else if (resY) {
-                        console.log(2);
                         Timeseries.divide(resY.calc, resY);
+                        console.log(Timeseries.values);
                         LAYOUT.scene.yaxis = {
                             title: resY.text
                         };
@@ -118,10 +122,6 @@ angular.module('myApp')
 
                 }, true);
 
-                //scope.setColorscale = function (name) {
-                //    Plotly.restyle('plotly', {colorscale: name});
-                //};
-
                 scope.refresh = function () {
 
                     console.log(angular.copy(Timeseries.getRenderableValues()));
@@ -130,6 +130,22 @@ angular.module('myApp')
                         z: Timeseries.getRenderableValues(),
                         type: 'surface'
                     }], LAYOUT);
+                };
+
+                scope.getYAxisResolutionIndex = function () {
+                    if (!scope.options.yaxis) {
+                        return -1;
+                    }
+
+                    for (var i = 0; i < scope.possibleResolutions.length; i++) {
+                        if (scope.possibleResolutions[i].text === scope.options.yaxis) {
+                            return i;
+                        }
+                    }
+                };
+
+                function reset() {
+                    LAYOUT.scene.yaxis = LAYOUT.scene.xaxis = {};
                 }
             }
         };

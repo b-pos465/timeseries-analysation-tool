@@ -1,10 +1,3 @@
-/**
- *
- * @param startdate - Date
- * @param stepLength - int: interval step in ms.
- * @param values - [float]
- * @constructor
- */
 angular.module('myApp').service('Timeseries', function () {
 
     var self = this;
@@ -39,9 +32,6 @@ angular.module('myApp').service('Timeseries', function () {
 
 
     this.getRenderableValues = function () {
-
-        console.log(angular.copy(this.values));
-
         if (this.values && this.values[0].length === 1) {
 
             var copy = angular.copy(this.values);
@@ -80,7 +70,7 @@ angular.module('myApp').service('Timeseries', function () {
      */
     this.reset = function () {
         this.depth = 2;
-        this.values = this.SAVE.values;
+        this.values = self.SAVE.values;
     };
 
     /**
@@ -105,6 +95,7 @@ angular.module('myApp').service('Timeseries', function () {
             }
 
             if (parent === arr) {
+                console.log(arr, oldStep, this.startdate, func(arr, oldStep, this.startdate));
                 return func(arr, oldStep, this.startdate);
             }
             parent[i] = func(arr, oldStep, this.startdate);

@@ -79,13 +79,13 @@ angular.module('myApp').service('AggregatingService', function () {
             calc: self.sum
         }, {
             text: 'Durchschnitt',
-            calc: self.sum
+            calc: self.avg
         }, {
             text: 'Maximum',
-            calc: self.sum
+            calc: self.max
         }, {
             text: 'Minimum',
-            calc: self.sum
+            calc: self.min
         }
     ];
 
