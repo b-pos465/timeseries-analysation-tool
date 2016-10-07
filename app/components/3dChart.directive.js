@@ -21,6 +21,17 @@ angular.module('myApp')
                         r: 50,
                         b: 65,
                         t: 90
+                    },
+                    scene: {
+                        yaxis: {
+                            title: 'Tage'
+                        },
+                        xaxis: {
+                            title: 'Stunden'
+                        },
+                        zaxis: {
+                            title: 'Wert'
+                        }
                     }
                 };
                 scope.possibleColorscales = [
@@ -41,9 +52,12 @@ angular.module('myApp')
                     for (var i = 0; i < newSurfaces.length; i++) {
 
                         scope.timeseries.push(DataConverterTo1D.fromFunctionExpression(newSurfaces[i]));
+
                         scope.timeseries[0].divide(DividingService.getDays);
 
                         scope.timeseries[0].divide(DividingService.getHours);
+
+
                         //console.log(scope.timeseries[0].values);
                         scope.timeseries[0].aggregate(AggregatingService.avg);
                         //console.log(scope.timeseries[0].values);
