@@ -6,10 +6,15 @@ angular.module('myApp')
         return {
             templateUrl: 'app/components/3dChart.html',
             restrict: 'E',
-            scope: {
-
-            },
+            scope: {},
             link: function (scope) {
+
+                scope.possibleColorscales = [
+                    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
+                    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
+                ];
+                scope.possibleResolutions = DividingService.possibleResolutions;
+                scope.possibleAggregations = AggregatingService.possibleAggregations;
 
                 var LAYOUT = {
                     title: null,
@@ -23,66 +28,113 @@ angular.module('myApp')
                         t: 90
                     },
                     scene: {
-                        yaxis: {
-                            title: 'Tage'
-                        },
-                        xaxis: {
-                            title: 'Stunden'
-                        },
                         zaxis: {
                             title: 'Wert'
                         }
                     }
                 };
-                scope.possibleColorscales = [
-                    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
-                    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
-                ];
 
-                scope.surfaces = [DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries()];
-                scope.timeseries = [];
+                scope.surface = DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries();
 
-                scope.$watch('surfaces', function (newSurfaces) {
-                    if (newSurfaces.length < 1) {
+                scope.options = {};
+
+                function reset () {
+                    LAYOUT.scene.yaxis = LAYOUT.scene.xaxis = {};
+                }
+
+                scope.$watch('options', function (newOpt) {
+
+                    console.log(newOpt);
+
+                    if (!newOpt || !scope.timeseries) {
                         return;
                     }
-                    scope.timeseries = [];
-                    var data = [];
 
-                    for (var i = 0; i < newSurfaces.length; i++) {
+                    reset();
 
-                        scope.timeseries.push(DataConverterTo1D.fromFunctionExpression(newSurfaces[i]));
-
-                        scope.timeseries[0].divide(DividingService.getDays);
-
-                        scope.timeseries[0].divide(DividingService.getHours);
-
-
-                        //console.log(scope.timeseries[0].values);
-                        scope.timeseries[0].aggregate(AggregatingService.avg);
-                        //console.log(scope.timeseries[0].values);
-
-                        data.push({
-                            z: scope.timeseries[0].values,
-                            type: 'surface'
-                        });
-                        console.log(scope.timeseries[0].values);
+                    if (newOpt.yaxis) {
+                        for(var i = 0; i < scope.possibleResolutions.length; i++) {
+                            if (scope.possibleResolutions[i].text === newOpt.yaxis) {
+                                var resY = scope.possibleResolutions[i];
+                            }
+                        }
                     }
 
-                    scope.render(data);
+                    if (newOpt.xaxis && newOpt.agg) {
+
+                        // get aggregation type
+                        for(i = 0; i < scope.possibleAggregations.length; i++) {
+                            if (scope.possibleAggregations[i].text === newOpt.agg) {
+                                var agg = scope.possibleAggregations[i];
+                            }
+                        }
+
+                        // get xaxis resolution
+                        for(i = 0; i < scope.possibleResolutions.length; i++) {
+                            if (scope.possibleResolutions[i].text === newOpt.xaxis) {
+                                var resX = scope.possibleResolutions[i];
+                            }
+                        }
+                    }
+
+
+                    scope.timeseries.reset();
+                    console.log(scope.timeseries.values, resY);
+
+                    if (resY && agg && resX) {
+                        scope.timeseries.divide(resY.calc);
+                        console.log(angular.copy(scope.timeseries.values));
+                        scope.timeseries.divide(resX.calc);
+                        console.log(scope.timeseries.values);
+                        scope.timeseries.aggregate(agg.calc);
+                        console.log(scope.timeseries.values);
+
+                        LAYOUT.scene.xaxis = {
+                            title: resX.text
+                        };
+                        LAYOUT.scene.yaxis = {
+                            title: resY.text
+                        };
+                    }
+
+                    if (resY) {
+                        scope.timeseries.divide(resY.calc);
+                        LAYOUT.scene.yaxis = {
+                            title: resY.text
+                        };
+                    }
+
+                    scope.refresh();
                 }, true);
 
-                scope.addSurface = function () {
-                    scope.surfaces.push(DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries());
-                };
+                scope.$watch('surface', function (newSurface) {
+                    if (!newSurface) {
+                        return;
+                    }
+                    scope.timeseries = DataConverterTo1D.fromFunctionExpression(newSurface);
+                    //scope.timeseries.divide(DividingService.getDays);
+                    //scope.timeseries.divide(DividingService.getHours);
 
-                scope.setColorscale = function (name) {
-                    Plotly.restyle('plotly', {colorscale: name});
-                };
 
-                scope.render= function(data) {
+                    //console.log(scope.timeseries[0].values);
+                    //scope.timeseries.aggregate(AggregatingService.avg);
+                    //console.log(scope.timeseries[0].values);
 
-                    Plotly.newPlot('plotly', data, LAYOUT); // TODO
+                    //console.log(scope.timeseries.values);
+
+                    //scope.refresh();
+                }, true);
+
+                //scope.setColorscale = function (name) {
+                //    Plotly.restyle('plotly', {colorscale: name});
+                //};
+
+                scope.refresh = function () {
+
+                    Plotly.newPlot('plotly', [{
+                        z: scope.timeseries.values,
+                        type: 'surface'
+                    }], LAYOUT);
                 }
             }
         };

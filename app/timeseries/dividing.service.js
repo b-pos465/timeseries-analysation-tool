@@ -5,6 +5,7 @@
  */
 angular.module('myApp').service('DividingService', function () {
 
+
     /*
      Nothing smaller then milli seconds are supported.
      */
@@ -14,6 +15,7 @@ angular.module('myApp').service('DividingService', function () {
     var dayInMSec = 24 * hourInMSec;
     var weekInMSec = 7 * dayInMSec;
 
+    var self = this;
 
     function cutInSameSize(values, interval, offset) {
         var result = [];
@@ -93,11 +95,40 @@ angular.module('myApp').service('DividingService', function () {
         return cutInSameSize(values, dayInMSec / stepLength, offset);
     };
 
-    this.getWeek = function (values, stepLength, startdate) {
+    this.getWeeks = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % weekInMSec;
 
         return cutInSameSize(values, weekInMSec / stepLength, offset);
     };
+
+
+    this.possibleResolutions = [{
+        text: 'Millisekunden',
+        value: 1,
+        calc: function (values) {
+            return values;
+        }
+    }, {
+        text: 'Sekunden',
+        value: secInMSec,
+        calc: self.getSeconds
+    }, {
+        text: 'Minuten',
+        value: minuteInMSec,
+        calc: self.getMinutes
+    }, {
+        text: 'Stunden',
+        value: hourInMSec,
+        calc: self.getHours
+    }, {
+        text: 'Tage',
+        value: dayInMSec,
+        calc: self.getDays
+    }, {
+        text: 'Wochen',
+        value: weekInMSec,
+        calc: self.getWeeks
+    }];
 
     return this;
 });

@@ -71,6 +71,24 @@ angular.module('myApp').service('AggregatingService', function () {
         return min;
     };
 
+    var self = this;
+
+    this.possibleAggregations = [
+        {
+            text: 'Summe',
+            calc: self.sum
+        }, {
+            text: 'Durchschnitt',
+            calc: self.sum
+        }, {
+            text: 'Maximum',
+            calc: self.sum
+        }, {
+            text: 'Minimum',
+            calc: self.sum
+        }
+    ];
+
     return this;
 
 })
