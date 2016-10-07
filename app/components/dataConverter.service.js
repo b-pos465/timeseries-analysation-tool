@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp').service('DataConverterTo1D', function () {
+angular.module('myApp').service('DataConverter', function (Timeseries) {
 
     this.fromFunctionExpression = function (surface) {
 
@@ -9,7 +9,7 @@ angular.module('myApp').service('DataConverterTo1D', function () {
             data.push(eval(surface.dataDefinition.specs.funcTerm));
         }
 
-        return new Timeseries(surface.dataDefinition.specs.startdate,surface.dataDefinition.specs.stepLength,data);
+        Timeseries.set(surface.dataDefinition.specs.startdate, surface.dataDefinition.specs.stepLength, data);
     };
 
     return this;

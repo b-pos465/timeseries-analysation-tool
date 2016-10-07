@@ -5,15 +5,20 @@
  * @param values - [float]
  * @constructor
  */
-function Timeseries(startdate, stepLength, values) {
+angular.module('myApp').service('Timeseries', function () {
 
-    this.SAVE = {
-        values: values
+    var self = this;
+    this.set = function Timeseries(startdate, stepLength, values) {
+
+        self.SAVE = {
+            values: values
+        };
+        self.startdate = startdate;
+        self.stepLength = stepLength;
+        self.values = values;
+        self.depth = 2;
     };
-    this.depth = 2;
-    this.startdate = startdate;
-    this.stepLength = stepLength;
-    this.values = values;
+
 
     /**
      * Cuts the most inner sub-arrays in parts by a
@@ -22,12 +27,37 @@ function Timeseries(startdate, stepLength, values) {
      * @param divFunc
      */
     this.divide = function (divFunc) {
+
         this.depth++;
 
         var temp = this.funcMostInnerArrays(this.values, this.values, divFunc, 0);
-        if( angular.isDefined(temp)) {
+        if (angular.isDefined(temp)) {
             this.values = temp;
         }
+
+    };
+
+
+    this.getRenderableValues = function () {
+
+        console.log(angular.copy(this.values));
+
+        if (this.values && this.values[0].length === 1) {
+
+            var copy = angular.copy(this.values);
+            for (var i = 0; i < this.values.length; i++) {
+                copy[i].push(copy[i][0]);
+            }
+
+            return copy;
+        } else if (this.values && this.values.length === 1) {
+            copy = angular.copy(this.values);
+            copy.push(copy[0]);
+
+            return copy;
+        }
+
+        return this.values;
 
     };
 
@@ -40,7 +70,7 @@ function Timeseries(startdate, stepLength, values) {
     this.aggregate = function (aggFunc) {
         this.depth--;
         var temp = this.funcMostInnerArrays(this.values, this.values, aggFunc, 0, true);
-        if( angular.isDefined(temp)) {
+        if (angular.isDefined(temp)) {
             this.values = temp;
         }
     };
@@ -70,11 +100,11 @@ function Timeseries(startdate, stepLength, values) {
         if (angular.isArray(arr) && !angular.isArray(arr[0])) { //found most inner array
 
             var oldStep = this.stepLength;
-            if(isAgg) {
+            if (isAgg) {
                 this.stepLength *= arr.length;
             }
 
-            if(parent === arr) {
+            if (parent === arr) {
                 return func(arr, oldStep, this.startdate);
             }
             parent[i] = func(arr, oldStep, this.startdate);
@@ -84,5 +114,7 @@ function Timeseries(startdate, stepLength, values) {
                 this.funcMostInnerArrays(arr, arr[t], func, t, isAgg);
             }
         }
-    }
-}
+    };
+
+    return this;
+});

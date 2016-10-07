@@ -4,18 +4,22 @@
         <div class="form-group">
             <label for="sel1">Y-Achsen Auflösung:</label>
             <select class="form-control" id="sel1" ng-model="options.yaxis">
-                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength >= res.value">{{res.text}}</option>
+                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value"
+                        ng-value="res.text">{{res.text}}
+                </option>
             </select>
         </div>
         <div class="form-group">
             <label for="sel2">X-Achsen Aggregation:</label>
             <select class="form-control" id="sel2" ng-model="options.xaxis">
-                <option ng-repeat="res in possibleResolutions">{{res.text}}</option>
+                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value"
+                        ng-value="res.text">{{res.text}}
+                </option>
             </select>
         </div>
-        <div class="form-group" ng-if="options.xaxis">
+        <div class="form-group">
             <label for="sel3">Aggregationstyp:</label>
-            <select class="form-control" id="sel3" ng-model="options.agg">
+            <select class="form-control" id="sel3" ng-model="options.agg" ng-disabled="!options.xaxis">
                 <option ng-repeat="agg in possibleAggregations">{{agg.text}}</option>
             </select>
         </div>

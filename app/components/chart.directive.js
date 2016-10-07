@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('sandbox3dChart', function (DataConverterTo1D, DefaultTimeseriesDefinition, DividingService, AggregatingService) {
+    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, Timeseries) {
 
         return {
-            templateUrl: 'app/components/3dChart.html',
+            templateUrl: 'app/components/chart.html',
             restrict: 'E',
             scope: {},
             link: function (scope) {
@@ -44,9 +44,8 @@ angular.module('myApp')
 
                 scope.$watch('options', function (newOpt) {
 
-                    console.log(newOpt);
-
-                    if (!newOpt || !scope.timeseries) {
+                    console.log(newOpt, Timeseries.SAVE)
+                    if (!newOpt || !Timeseries.SAVE) {
                         return;
                     }
 
@@ -78,16 +77,16 @@ angular.module('myApp')
                     }
 
 
-                    scope.timeseries.reset();
-                    console.log(scope.timeseries.values, resY);
+                    Timeseries.reset();
 
                     if (resY && agg && resX) {
-                        scope.timeseries.divide(resY.calc);
-                        console.log(angular.copy(scope.timeseries.values));
-                        scope.timeseries.divide(resX.calc);
-                        console.log(scope.timeseries.values);
-                        scope.timeseries.aggregate(agg.calc);
-                        console.log(scope.timeseries.values);
+                        console.log(1);
+                        Timeseries.divide(resY.calc);
+                        console.log(angular.copy(Timeseries.values));
+                        Timeseries.divide(resX.calc);
+                        console.log(Timeseries.values);
+                        Timeseries.aggregate(agg.calc);
+                        console.log(Timeseries.values);
 
                         LAYOUT.scene.xaxis = {
                             title: resX.text
@@ -95,12 +94,15 @@ angular.module('myApp')
                         LAYOUT.scene.yaxis = {
                             title: resY.text
                         };
-                    }
-
-                    if (resY) {
-                        scope.timeseries.divide(resY.calc);
+                    } else if (resY) {
+                        console.log(2);
+                        Timeseries.divide(resY.calc, resY);
                         LAYOUT.scene.yaxis = {
                             title: resY.text
+                        };
+
+                        LAYOUT.scene.xaxis = {
+                            title: '1 \u2261 ' + Timeseries.stepLength + 'ms'
                         };
                     }
 
@@ -111,18 +113,9 @@ angular.module('myApp')
                     if (!newSurface) {
                         return;
                     }
-                    scope.timeseries = DataConverterTo1D.fromFunctionExpression(newSurface);
-                    //scope.timeseries.divide(DividingService.getDays);
-                    //scope.timeseries.divide(DividingService.getHours);
+                    DataConverter.fromFunctionExpression(newSurface);
+                    scope.timeseries = Timeseries;
 
-
-                    //console.log(scope.timeseries[0].values);
-                    //scope.timeseries.aggregate(AggregatingService.avg);
-                    //console.log(scope.timeseries[0].values);
-
-                    //console.log(scope.timeseries.values);
-
-                    //scope.refresh();
                 }, true);
 
                 //scope.setColorscale = function (name) {
@@ -131,8 +124,10 @@ angular.module('myApp')
 
                 scope.refresh = function () {
 
+                    console.log(angular.copy(Timeseries.getRenderableValues()));
+
                     Plotly.newPlot('plotly', [{
-                        z: scope.timeseries.values,
+                        z: Timeseries.getRenderableValues(),
                         type: 'surface'
                     }], LAYOUT);
                 }
