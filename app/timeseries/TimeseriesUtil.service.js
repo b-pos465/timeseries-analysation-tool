@@ -21,7 +21,7 @@ angular.module('myApp').service('TimeseriesUtil', function () {
      */
     this.divide = function (timeseries, divFunc) {
 
-        var temp = this.funcMostInnerArrays(timeseries.values, timeseries.values, divFunc, 0, timeseries);
+        var temp = this.funcMostInnerArrays(timeseries.values, timeseries.values, divFunc, 0, false, timeseries);
         if (angular.isDefined(temp)) {
             timeseries.depth++;
             timeseries.values = temp;
@@ -88,9 +88,9 @@ angular.module('myApp').service('TimeseriesUtil', function () {
             }
 
             if (parent === arr) {
-                return func(arr, oldStep, timeseries.startdate);
+                return func(arr, oldStep, timeseries.startDate);
             }
-            parent[i] = func(arr, oldStep, timeseries.startdate);
+            parent[i] = func(arr, oldStep, timeseries.startDate);
 
         } else {
             for (var t = 0; t < arr.length; t++) {

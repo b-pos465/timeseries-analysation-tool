@@ -39,21 +39,25 @@ angular.module('myApp')
                     }
                 };
 
+                // initial test values
                 scope.surface = DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries();
-                scope.options = {};
 
                 scope.$watch('options', function (newOpt, oldOpt) {
 
                     console.log(newOpt);
-
                     var resY = undefined, agg = undefined, resX = undefined;
 
-                    if (!newOpt || !Timeseries.SAVE) {
+                    // options and values must be set
+                    if (!newOpt ) {
                         return;
                     }
-                    reset();
 
-                    if (newOpt.yaxis !== oldOpt.yaxis) {
+                    // reset timeseries every time, opt changes
+                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.surface.specs.startDate, scope.surface.specs.stepLength, DataConverter.fromFunctionExpression(scope.surface));
+
+                    resetAxes();
+
+                    if (oldOpt && newOpt.yaxis !== oldOpt.yaxis) {
                         newOpt.xaxis = null;
                     }
                     if (newOpt.yaxis) {
@@ -79,18 +83,18 @@ angular.module('myApp')
                             }
                         }
                     }
-                    Timeseries.reset();
-                    console.log(Timeseries.values);
+
+                    console.log(scope.timeseries.values);
                     console.log(resY, agg, resX);
 
-                    if (resY && resX && agg ) {
+                    if (resY && resX && agg) {
 
-                        Timeseries.divide(resY.calc);
-                        console.log(angular.copy(Timeseries.values));
-                        Timeseries.divide(resX.calc);
-                        console.log(Timeseries.values);
-                        Timeseries.aggregate(agg.calc);
-                        console.log(Timeseries.values);
+                        TimeseriesUtil.divide(scope.timeseries, resY.calc);
+                        console.log(angular.copy(scope.timeseries.values));
+                        TimeseriesUtil.divide(scope.timeseries, resX.calc);
+                        console.log(scope.timeseries.values);
+                        TimeseriesUtil.aggregate(scope.timeseries, agg.calc);
+                        console.log(scope.timeseries.values);
 
                         LAYOUT.scene.xaxis = {
                             title: resX.text
@@ -99,41 +103,32 @@ angular.module('myApp')
                             title: resY.text
                         };
                     } else if (resY) {
-                        Timeseries.divide(resY.calc, resY);
-                        console.log(Timeseries.values);
+                        TimeseriesUtil.divide(scope.timeseries, resY.calc, resY);
+                        console.log(scope.timeseries.values);
                         LAYOUT.scene.yaxis = {
                             title: resY.text
                         };
 
                         LAYOUT.scene.xaxis = {
-                            title: '1 \u2261 ' + Timeseries.stepLength + 'ms'
+                            title: '1 \u2261 ' + scope.timeseries.stepLength + 'ms'
                         };
                     }
 
                     scope.refresh();
                 }, true);
 
-                scope.$watch('surface', function (newSurface) {
-                    if (!newSurface) {
-                        return;
-                    }
-                    DataConverter.fromFunctionExpression(newSurface);
-                    scope.timeseries = Timeseries;
-
-                }, true);
-
                 scope.refresh = function () {
 
-                    console.log(angular.copy(Timeseries.getRenderableValues()));
+                    console.log(angular.copy(TimeseriesUtil.getRenderableValues(scope.timeseries)));
 
                     Plotly.newPlot('plotly', [{
-                        z: Timeseries.getRenderableValues(),
+                        z: TimeseriesUtil.getRenderableValues(scope.timeseries),
                         type: 'surface'
                     }], LAYOUT);
                 };
 
                 scope.getYAxisResolutionIndex = function () {
-                    if (!scope.options.yaxis) {
+                    if (!scope.options || !scope.options.yaxis) {
                         return -1;
                     }
 
@@ -144,7 +139,7 @@ angular.module('myApp')
                     }
                 };
 
-                function reset() {
+                function resetAxes() {
                     LAYOUT.scene.yaxis = LAYOUT.scene.xaxis = {};
                 }
             }
