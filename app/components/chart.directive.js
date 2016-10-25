@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, Timeseries) {
+    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil) {
 
         return {
             templateUrl: 'app/components/chart.html',
