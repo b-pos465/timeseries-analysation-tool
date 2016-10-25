@@ -14,8 +14,8 @@ angular.module('myApp').service('DefaultTimeseriesDefinition', function () {
             specs: {
                 startDate: new Date('1970-01-01'),
                 funcTerm: 'x',
-                stepLength: 1000,
-                count: 18000
+                stepLength: 900000,
+                count: 35040
             }
         }
     };

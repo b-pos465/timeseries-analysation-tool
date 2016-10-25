@@ -109,13 +109,26 @@ angular.module('myApp')
                             title: resY.text
                         };
 
+                        var res = selectMostFittingResolution(scope.timeseries);
+
                         LAYOUT.scene.xaxis = {
-                            title: '1 \u2261 ' + scope.timeseries.stepLength + 'ms'
+                            title: '1 \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text
                         };
                     }
 
                     scope.refresh();
                 }, true);
+
+                function selectMostFittingResolution(timeseries) {
+
+                    var i = 1; // skip original
+                    while(scope.possibleResolutions[i].value <= timeseries.stepLength) {
+                        i++;
+                    }
+                    i--;
+
+                    return scope.possibleResolutions[i];
+                }
 
                 scope.refresh = function () {
 

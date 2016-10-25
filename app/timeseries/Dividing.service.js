@@ -113,23 +113,23 @@ angular.module('myApp').service('DividingService', function () {
             });
         }
     }, {
-        text: 'Sekunden',
+        text: 'Sekunde/n',
         value: secInMSec,
         calc: self.getSeconds
     }, {
-        text: 'Minuten',
+        text: 'Minute/n',
         value: minuteInMSec,
         calc: self.getMinutes
     }, {
-        text: 'Stunden',
+        text: 'Stunde/n',
         value: hourInMSec,
         calc: self.getHours
     }, {
-        text: 'Tage',
+        text: 'Tag/e',
         value: dayInMSec,
         calc: self.getDays
     }, {
-        text: 'Wochen',
+        text: 'Woche/n',
         value: weekInMSec,
         calc: self.getWeeks
     }];
