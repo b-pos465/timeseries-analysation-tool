@@ -9,14 +9,13 @@ angular.module('myApp')
             scope: {},
             link: function (scope) {
 
-                //scope.possibleColorscales = [
-                //    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
-                //    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
-                //];
-                //scope.setColorscale = function (name) {
-                //    Plotly.restyle('plotly', {colorscale: name});
-                //};
-
+                scope.possibleColorscales = [
+                    'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
+                    , 'Blackbody', 'Earth', 'Electric', 'Viridis'
+                ];
+                scope.setColorscale = function (name) {
+                    Plotly.restyle('plotly', {colorscale: name});
+                };
 
                 scope.possibleResolutions = DividingService.possibleResolutions;
                 scope.possibleAggregations = AggregatingService.possibleAggregations;
@@ -41,6 +40,8 @@ angular.module('myApp')
 
                 // initial test values
                 scope.surface = DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries();
+                scope.timeseries = TimeseriesUtil.newTimeseries(scope.surface.specs.startDate, scope.surface.specs.stepLength, DataConverter.fromFunctionExpression(scope.surface));
+
 
                 scope.$watch('options', function (newOpt, oldOpt) {
 
