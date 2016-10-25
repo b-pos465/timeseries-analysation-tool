@@ -7,7 +7,7 @@
   "private": true,
   "dependencies": {
     "angular": "~1.4.0",
-    "plotlyjs": "plotly#~1.16.2",
+    "plotlyjs": "plotly#~1.18.1",
     "bootstrap": "~3.3.6",
     "jquery": "~2.2.0",
     "angular-bootstrap": "~1.1.1"
