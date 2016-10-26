@@ -11,7 +11,7 @@
         <div class="form-group">
             <label for="sel2">X-Achsen Aggregation:</label>
             <select class="form-control" id="sel2" ng-model="options.xaxis">
-                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value || $index >= getYAxisResolutionIndex()"
+                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value || $index > getYAxisResolutionIndex()"
                         ng-value="res.text">{{res.text}}</option>
             </select>
         </div>

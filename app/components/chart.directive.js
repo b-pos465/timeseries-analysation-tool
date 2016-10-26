@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil) {
+    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil, $timeout) {
 
         return {
             templateUrl: 'app/components/chart.html',
             restrict: 'E',
-            scope: {},
+            scope: {
+                externData: '=data'
+            },
             link: function (scope) {
 
                 scope.possibleColorscales = [
@@ -34,14 +36,45 @@ angular.module('myApp')
                     scene: {
                         zaxis: {
                             title: 'Wert'
-                        }
+                        },
+                        yaxis: {},
+                        xaxis: {}
                     }
                 };
 
-                // initial test values
-                scope.surface = DefaultTimeseriesDefinition.getDefaultFunctionBasedTimeseries();
-                scope.timeseries = TimeseriesUtil.newTimeseries(scope.surface.specs.startDate, scope.surface.specs.stepLength, DataConverter.fromFunctionExpression(scope.surface));
+                scope.$watch('externData', function (newData) {
 
+                    if (!newData) {
+                        return;
+                    }
+
+                    console.log('Externe Daten:', newData);
+                    if (newData.type === 'function') {
+
+                        if (!angular.isString(newData.specs.funcTerm)) {
+                            throw 'Expected an String in specs.values but didn\'t find it!';
+                        }
+
+                        // Create DOM elements before function calculation freezes the webpage.
+                        $timeout(function() {
+                            DataConverter.fromFunctionExpression(newData);
+                            scope.rawData = DataConverter.fromFunctionExpression(newData);
+                            scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
+                        });
+
+
+                    } else if (newData.type === 'array') {
+
+                        if (!angular.isArray(newData.specs.values)) {
+                            throw 'Expected an array in specs.values but didn\'t find it!';
+                        }
+
+                        scope.rawData = newData.specs.values;
+                        scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
+                    } else {
+                        throw 'Unrecognized data type!';
+                    }
+                });
 
                 scope.$watch('options', function (newOpt, oldOpt) {
 
@@ -49,13 +82,12 @@ angular.module('myApp')
                     var resY = undefined, agg = undefined, resX = undefined;
 
                     // options and values must be set
-                    if (!newOpt ) {
+                    if (!newOpt) {
                         return;
                     }
 
-                    // reset timeseries every time, opt changes
-                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.surface.specs.startDate, scope.surface.specs.stepLength, DataConverter.fromFunctionExpression(scope.surface));
-
+                    // reset timeseries every time 'scope.options' changes
+                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.externData.specs.startDate, scope.externData.specs.stepLength, scope.rawData);
                     resetAxes();
 
                     if (oldOpt && newOpt.yaxis !== oldOpt.yaxis) {
@@ -97,24 +129,18 @@ angular.module('myApp')
                         TimeseriesUtil.aggregate(scope.timeseries, agg.calc);
                         console.log(scope.timeseries.values);
 
-                        LAYOUT.scene.xaxis = {
-                            title: resX.text
-                        };
-                        LAYOUT.scene.yaxis = {
-                            title: resY.text
-                        };
+                        LAYOUT.scene.xaxis.title = resX.text + ' ' + scope.options.agg;
+                        LAYOUT.scene.yaxis.title = resY.text;
                     } else if (resY) {
                         TimeseriesUtil.divide(scope.timeseries, resY.calc, resY);
                         console.log(scope.timeseries.values);
-                        LAYOUT.scene.yaxis = {
-                            title: resY.text
-                        };
+                        console.log(LAYOUT.scene.yaxis.title);
+                        LAYOUT.scene.yaxis.title = resY.text;
+                        console.log(LAYOUT.scene.yaxis.title);
 
                         var res = selectMostFittingResolution(scope.timeseries);
-
-                        LAYOUT.scene.xaxis = {
-                            title: '1 \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text
-                        };
+                        LAYOUT.scene.xaxis.title = '1 \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text;
+                        console.log(angular.copy(LAYOUT));
                     }
 
                     scope.refresh();
@@ -123,7 +149,7 @@ angular.module('myApp')
                 function selectMostFittingResolution(timeseries) {
 
                     var i = 1; // skip original
-                    while(scope.possibleResolutions[i].value <= timeseries.stepLength) {
+                    while (scope.possibleResolutions[i].value <= timeseries.stepLength) {
                         i++;
                     }
                     i--;
@@ -154,7 +180,7 @@ angular.module('myApp')
                 };
 
                 function resetAxes() {
-                    LAYOUT.scene.yaxis = LAYOUT.scene.xaxis = {};
+                    LAYOUT.scene.yaxis.title = LAYOUT.scene.xaxis.title = '';
                 }
             }
         };
