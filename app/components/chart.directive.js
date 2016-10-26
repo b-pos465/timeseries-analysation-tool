@@ -85,6 +85,10 @@ angular.module('myApp')
 
                     scope.currentMin = scope.range[0];
                     scope.currentMax = scope.range[1];
+
+                    scope.options = {
+                        yaxis: scope.possibleResolutions[0].text
+                    };
                 });
 
                 scope.$watch('options', function (newOpt, oldOpt) {
@@ -146,12 +150,16 @@ angular.module('myApp')
                         TimeseriesUtil.divide(scope.timeseries, resY.calc, resY);
                         console.log(scope.timeseries.values);
                         console.log(LAYOUT.scene.yaxis.title);
+                        var res = selectMostFittingResolution(scope.timeseries);
+
                         LAYOUT.scene.yaxis.title = resY.text;
                         console.log(LAYOUT.scene.yaxis.title);
-
-                        var res = selectMostFittingResolution(scope.timeseries);
                         LAYOUT.scene.xaxis.title = '1 \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text;
                         console.log(angular.copy(LAYOUT));
+
+                        if (resY.text === 'Original') {
+                            LAYOUT.scene.yaxis.title = resY.text + ' \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text;
+                        }
                     }
 
                     scope.refresh();
