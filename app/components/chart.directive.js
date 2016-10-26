@@ -195,15 +195,27 @@ angular.module('myApp')
                 }
 
                 scope.setMin = function (min) {
-                    Plotly.restyle('plotly', {cmin: min});
+                    try {
+                        Plotly.restyle('plotly', {cmin: min});
+                    } catch (e) {
+                        console.log('Plotly wurde noch nicht initialisiert.');
+                    }
                 };
 
                 scope.setMax = function (max) {
-                    Plotly.restyle('plotly', {cmax: max});
+                    try {
+                        Plotly.restyle('plotly', {cmax: max});
+                    } catch (e) {
+                        console.log('Plotly wurde noch nicht initialisiert.');
+                    }
                 };
 
                 scope.setColorscale = function (name) {
-                    Plotly.restyle('plotly', {colorscale: name});
+                    try {
+                        Plotly.restyle('plotly', {colorscale: name});
+                    } catch (e) {
+                        console.log('Plotly wurde noch nicht initialisiert.');
+                    }
                 };
             }
         };
