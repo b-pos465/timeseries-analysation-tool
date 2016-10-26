@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * This service provides diving functions for the Timeseries object.
+ * This service provides diving functions for manipulating timeseries.
  */
 angular.module('myApp').service('DividingService', function () {
 
@@ -30,7 +30,6 @@ angular.module('myApp').service('DividingService', function () {
             if (k + interval <= values.length) {
                 result.push(values.slice(k , k + interval ));
             } else {
-                console.log('Rest aufgetreten!');
                 result.push(values.slice(k));
             }
 

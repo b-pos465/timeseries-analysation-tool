@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil, $timeout, $filter) {
+    .directive('chart', function (DividingService, AggregatingService, TimeseriesUtil, $timeout, $filter) {
 
         return {
-            templateUrl: 'app/components/chart.html',
+            templateUrl: 'app/chart/chart.html',
             restrict: 'E',
             scope: {
                 externData: '=data'
@@ -61,8 +61,7 @@ angular.module('myApp')
 
                         // Create DOM elements before function calculation freezes the webpage.
                         $timeout(function() {
-                            DataConverter.fromFunctionExpression(newData);
-                            scope.rawData = DataConverter.fromFunctionExpression(newData);
+                            scope.rawData = convertFromFunctionExpression(newData);
                             scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
                         });
 
@@ -162,6 +161,15 @@ angular.module('myApp')
                     i--;
 
                     return scope.possibleResolutions[i];
+                }
+
+                function convertFromFunctionExpression (surface) {
+
+                    var data = [];
+                    for (var x = 0; x < surface.specs.count; x++) {
+                        data.push(eval(surface.specs.funcTerm));
+                    }
+                    return data;
                 }
 
                 scope.refresh = function () {

@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('myApp', ['ui.bootstrap']);
+angular.module('myApp', []);
