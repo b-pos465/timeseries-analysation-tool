@@ -53,7 +53,6 @@ angular.module('myApp')
                         return;
                     }
 
-                    console.log('Externe Daten:', newData);
                     if (newData.type === 'function') {
 
                         if (!angular.isString(newData.specs.funcTerm)) {
@@ -93,7 +92,6 @@ angular.module('myApp')
 
                 scope.$watch('options', function (newOpt, oldOpt) {
 
-                    console.log(newOpt);
                     var resY = undefined, agg = undefined, resX = undefined;
 
                     // options and values must be set
@@ -132,30 +130,20 @@ angular.module('myApp')
                         }
                     }
 
-                    console.log(scope.timeseries.values);
-                    console.log(resY, agg, resX);
-
                     if (resY && resX && agg) {
 
                         TimeseriesUtil.divide(scope.timeseries, resY.calc);
-                        console.log(angular.copy(scope.timeseries.values));
                         TimeseriesUtil.divide(scope.timeseries, resX.calc);
-                        console.log(scope.timeseries.values);
                         TimeseriesUtil.aggregate(scope.timeseries, agg.calc);
-                        console.log(scope.timeseries.values);
 
                         LAYOUT.scene.xaxis.title = resX.text + ' ' + scope.options.agg;
                         LAYOUT.scene.yaxis.title = resY.text;
                     } else if (resY) {
                         TimeseriesUtil.divide(scope.timeseries, resY.calc, resY);
-                        console.log(scope.timeseries.values);
-                        console.log(LAYOUT.scene.yaxis.title);
                         var res = selectMostFittingResolution(scope.timeseries);
 
                         LAYOUT.scene.yaxis.title = resY.text;
-                        console.log(LAYOUT.scene.yaxis.title);
                         LAYOUT.scene.xaxis.title = '1 \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text;
-                        console.log(angular.copy(LAYOUT));
 
                         if (resY.text === 'Original') {
                             LAYOUT.scene.yaxis.title = resY.text + ' \u2261 ' + scope.timeseries.stepLength / res.value + ' ' + res.text;
@@ -177,9 +165,6 @@ angular.module('myApp')
                 }
 
                 scope.refresh = function () {
-
-                    console.log(angular.copy(TimeseriesUtil.getRenderableValues(scope.timeseries)));
-
                     Plotly.newPlot('plotly', [{
                         z: TimeseriesUtil.getRenderableValues(scope.timeseries),
                         type: 'surface'
