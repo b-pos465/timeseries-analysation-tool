@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil, $timeout) {
+    .directive('chart', function (DataConverter, DefaultTimeseriesDefinition, DividingService, AggregatingService, TimeseriesUtil, $timeout, $filter) {
 
         return {
             templateUrl: 'app/components/chart.html',
@@ -11,13 +11,18 @@ angular.module('myApp')
             },
             link: function (scope) {
 
+                scope.formatNumber = function(num) {
+                    return $filter('number')(num, 2);
+                };
+
+                scope.range = [0.0, 1.0];
+                scope.currentMin = scope.range[0];
+                scope.currentMax = scope.range[1];
+
                 scope.possibleColorscales = [
                     'Greys', 'YIGnBu', 'Greens', 'YIOrRd', 'Bluered', 'RdBu', 'Reds', 'Blues', 'Picnic', 'Rainbow', 'Portland', 'Jet', 'Hot'
                     , 'Blackbody', 'Earth', 'Electric', 'Viridis'
                 ];
-                scope.setColorscale = function (name) {
-                    Plotly.restyle('plotly', {colorscale: name});
-                };
 
                 scope.possibleResolutions = DividingService.possibleResolutions;
                 scope.possibleAggregations = AggregatingService.possibleAggregations;
@@ -74,6 +79,12 @@ angular.module('myApp')
                     } else {
                         throw 'Unrecognized data type!';
                     }
+
+                    scope.range[0] = Math.min.apply(Math, scope.rawData);
+                    scope.range[1] = Math.max.apply(Math, scope.rawData);
+
+                    scope.currentMin = scope.range[0];
+                    scope.currentMax = scope.range[1];
                 });
 
                 scope.$watch('options', function (newOpt, oldOpt) {
@@ -182,6 +193,18 @@ angular.module('myApp')
                 function resetAxes() {
                     LAYOUT.scene.yaxis.title = LAYOUT.scene.xaxis.title = '';
                 }
+
+                scope.setMin = function (min) {
+                    Plotly.restyle('plotly', {cmin: min});
+                };
+
+                scope.setMax = function (max) {
+                    Plotly.restyle('plotly', {cmax: max});
+                };
+
+                scope.setColorscale = function (name) {
+                    Plotly.restyle('plotly', {colorscale: name});
+                };
             }
         };
     });
