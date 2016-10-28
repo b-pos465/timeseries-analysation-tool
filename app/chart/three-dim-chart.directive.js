@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('myApp')
-    .directive('chart', function (DividingService, AggregatingService, TimeseriesUtil, $timeout, $filter) {
+angular.module('TimeseriesAnalysationTool')
+    .directive('threeDimChart', function (DividingService, AggregatingService, TimeseriesUtil, $timeout, $filter) {
 
         return {
-            templateUrl: 'app/chart/chart.html',
+            templateUrl: 'app/chart/three-dim-chart.html',
             restrict: 'E',
             scope: {
                 externData: '=data'

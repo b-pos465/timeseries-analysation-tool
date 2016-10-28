@@ -1,10 +1,10 @@
 {
-  "name": "3d-viewer",
-  "description": "A 3D project.",
-  "version": "0.0.0",
+  "name": "TimeseriesAnalysationTool",
+  "description": "A 3D timeseries analysation tool.",
+  "version": "0.1.0",
   "homepage": "",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "dependencies": {
     "angular": "~1.4.0",
     "plotlyjs": "plotly#~1.18.1",

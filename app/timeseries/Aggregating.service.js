@@ -9,7 +9,7 @@
  *  - max
  *  - min
  */
-angular.module('myApp').service('AggregatingService', function () {
+angular.module('TimeseriesAnalysationTool').service('AggregatingService', function () {
 
     /**
      * Sums all values in one interval up.

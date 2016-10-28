@@ -3,7 +3,7 @@
 /**
  * This service provides diving functions for manipulating timeseries.
  */
-angular.module('myApp').service('DividingService', function () {
+angular.module('TimeseriesAnalysationTool').service('DividingService', function () {
 
 
     /*

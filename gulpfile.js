@@ -14,8 +14,8 @@ gulp.task('webserver', function () {
 });
 
 gulp.task('template', function () {
-    return gulp.src('**/chart/chart.html')
-        .pipe(templateCache({module:'myApp'}))
+    return gulp.src('**/chart/three-dim-chart.html')
+        .pipe(templateCache({module:'TimeseriesAnalysationTool'}))
         .pipe(gulp.dest('app/temp'));
 });
 

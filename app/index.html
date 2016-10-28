@@ -11,17 +11,17 @@
     <script src="../bower_components/lodash/lodash.min.js"></script>
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
-<body ng-app="myApp">
+<body ng-app="TimeseriesAnalysationTool">
 
 <div class="container-fluid" style="margin-top:30px" ng-controller="TestController">
-    <chart data="data"></chart>
+    <three-dim-chart data="data"></three-dim-chart>
 </div>
 
 <script src="app/app.js"></script>
 <script src="app/timeseries/TimeseriesUtil.service.js"></script>
 <script src="app/timeseries/Dividing.service.js"></script>
 <script src="app/timeseries/Aggregating.service.js"></script>
-<script src="app/chart/chart.directive.js"></script>
+<script src="app/chart/three-dim-chart.directive.js"></script>
 <script src="app/testcomponents/TestController.js"></script>
 <script src="app/testcomponents/DefaultTimeseriesDefinition.service.js"></script>
 

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp').service('DefaultTimeseriesDefinition', function ($http) {
+angular.module('TimeseriesAnalysationTool').service('DefaultTimeseriesDefinition', function ($http) {
 
     this.getDefaultFunctionBasedTimeseries = function () {
         return {

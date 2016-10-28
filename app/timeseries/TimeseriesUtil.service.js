@@ -1,4 +1,4 @@
-angular.module('myApp').service('TimeseriesUtil', function () {
+angular.module('TimeseriesAnalysationTool').service('TimeseriesUtil', function () {
 
     var self = this;
     this.newTimeseries = function(startDate, stepLength, values) {
