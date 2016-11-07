@@ -11,7 +11,7 @@ angular.module('TimeseriesAnalysationTool')
             },
             link: function (scope) {
 
-                scope.formatNumber = function(num) {
+                scope.formatNumber = function (num) {
                     return $filter('number')(num, 2);
                 };
 
@@ -53,30 +53,12 @@ angular.module('TimeseriesAnalysationTool')
                         return;
                     }
 
-                    if (newData.type === 'function') {
-
-                        if (!angular.isString(newData.specs.funcTerm)) {
-                            throw 'Expected an String in specs.values but didn\'t find it!';
-                        }
-
-                        // Create DOM elements before function calculation freezes the webpage.
-                        $timeout(function() {
-                            scope.rawData = convertFromFunctionExpression(newData);
-                            scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
-                        });
-
-
-                    } else if (newData.type === 'array') {
-
-                        if (!angular.isArray(newData.specs.values)) {
-                            throw 'Expected an array in specs.values but didn\'t find it!';
-                        }
-
-                        scope.rawData = newData.specs.values;
-                        scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
-                    } else {
-                        throw 'Unrecognized data type!';
+                    if (!angular.isArray(newData.values)) {
+                        throw 'Expected an array in `values` but didn\'t find it!';
                     }
+
+                    scope.rawData = newData.values;
+                    scope.timeseries = TimeseriesUtil.newTimeseries(newData.startDate, newData.stepLength, scope.rawData);
 
                     scope.range[0] = Math.min.apply(Math, scope.rawData);
                     scope.range[1] = Math.max.apply(Math, scope.rawData);
@@ -99,7 +81,7 @@ angular.module('TimeseriesAnalysationTool')
                     }
 
                     // reset timeseries every time 'scope.options' changes
-                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.externData.specs.startDate, scope.externData.specs.stepLength, scope.rawData);
+                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.externData.startDate, scope.externData.stepLength, scope.rawData);
                     resetAxes();
 
                     if (oldOpt && newOpt.yaxis !== oldOpt.yaxis) {
@@ -163,14 +145,11 @@ angular.module('TimeseriesAnalysationTool')
                     return scope.possibleResolutions[i];
                 }
 
-                function convertFromFunctionExpression (surface) {
-
-                    var data = [];
-                    for (var x = 0; x < surface.specs.count; x++) {
-                        data.push(eval(surface.specs.funcTerm));
-                    }
-                    return data;
-                }
+                scope.resetSelection = function () {
+                    scope.options.yaxis = 'Original';
+                    scope.options.xaxis = undefined;
+                    scope.options.agg = undefined;
+                };
 
                 scope.calculateRange = function (values) {
                     if (angular.isArray(values[0])) {

@@ -3,7 +3,7 @@
     <div class="col-md-2 col-md-offset-2">
         <div class="form-group">
             <label for="sel1">Y-Achsen Auflösung:</label>
-            <select class="form-control" id="sel1" ng-model="options.yaxis">
+            <select class="form-control" id="sel1" ng-model="options.yaxis" ng-disabled="options.xaxis">
                 <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value && res.value"
                         ng-value="res.text">{{res.text}}</option>
             </select>
@@ -21,6 +21,9 @@
                 <option ng-repeat="agg in possibleAggregations">{{agg.text}}</option>
             </select>
         </div>
+        <button class="btn btn-default" ng-click="resetSelection()">
+            Auswahl zurücksetzen
+        </button>
         <hr>
         <div class="form-group">
             <label for="color">Farbskala:</label>
@@ -28,7 +31,6 @@
                 <option ng-repeat="c in possibleColorscales">{{c}}</option>
             </select>
         </div>
-
         <div>
             <label for="slider1" >Minimum: <i style="font-weight: normal">{{formatNumber(currentMin)}}</i>
                 <input id="slider1" type="range" min="{{range[0]}}" max="{{currentMax}}" step="{{(currentMax - range[0]) / 100}}"
