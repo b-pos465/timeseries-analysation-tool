@@ -1,9 +1,10 @@
 'use strict';
 
 /**
- * This service provides diving functions for the Timeseries object.
+ * This service provides diving functions for manipulating timeseries.
  */
-angular.module('myApp').service('DividingService', function () {
+angular.module('TimeseriesAnalysationTool').service('DividingService', function () {
+
 
     /*
      Nothing smaller then milli seconds are supported.
@@ -14,6 +15,7 @@ angular.module('myApp').service('DividingService', function () {
     var dayInMSec = 24 * hourInMSec;
     var weekInMSec = 7 * dayInMSec;
 
+    var self = this;
 
     function cutInSameSize(values, interval, offset) {
         var result = [];
@@ -25,8 +27,8 @@ angular.module('myApp').service('DividingService', function () {
              Right now the last slice will be saved as well.
              Alternatively we could add interpolated values or cut it completely.
              */
-            if (k += interval < values.length) {
-                result.push(values.slice(k, k + interval));
+            if (k + interval <= values.length) {
+                result.push(values.slice(k , k + interval ));
             } else {
                 result.push(values.slice(k));
             }
@@ -69,6 +71,7 @@ angular.module('myApp').service('DividingService', function () {
 
     this.getMinutes = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % minuteInMSec;
+        console.log(values, offset, minuteInMSec / stepLength);
 
         if (!angular.isArray(values)) {
             return [values];
@@ -93,11 +96,42 @@ angular.module('myApp').service('DividingService', function () {
         return cutInSameSize(values, dayInMSec / stepLength, offset);
     };
 
-    this.getWeek = function (values, stepLength, startdate) {
+    this.getWeeks = function (values, stepLength, startdate) {
         var offset = startdate.getTime() % weekInMSec;
 
         return cutInSameSize(values, weekInMSec / stepLength, offset);
     };
+
+
+    this.possibleResolutions = [{
+        text: 'Original',
+        value: null,
+        calc: function (values) {
+            return _.map(values, function(i) {
+                return [i];
+            });
+        }
+    }, {
+        text: 'Sekunde/n',
+        value: secInMSec,
+        calc: self.getSeconds
+    }, {
+        text: 'Minute/n',
+        value: minuteInMSec,
+        calc: self.getMinutes
+    }, {
+        text: 'Stunde/n',
+        value: hourInMSec,
+        calc: self.getHours
+    }, {
+        text: 'Tag/e',
+        value: dayInMSec,
+        calc: self.getDays
+    }, {
+        text: 'Woche/n',
+        value: weekInMSec,
+        calc: self.getWeeks
+    }];
 
     return this;
 });

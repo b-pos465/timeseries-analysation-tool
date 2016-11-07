@@ -2,31 +2,28 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>3D Viewer Sandbox</title>
+    <title>Testumgebung</title>
 
     <script src="../bower_components/angular/angular.js"></script>
     <script src="../bower_components/plotlyjs/plotly.js"></script>
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="../bower_components/lodash/lodash.min.js"></script>
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
-<body ng-app="myApp">
+<body ng-app="TimeseriesAnalysationTool">
 
-<div class="container-fluid" style="margin-top:30px">
-    <sandbox3d-chart></sandbox3d-chart>
+<div class="container-fluid" style="margin-top:30px" ng-controller="TestController">
+    <three-dim-chart data="data"></three-dim-chart>
 </div>
 
-
 <script src="app/app.js"></script>
-<script src="app/timeseries/timeseries.object.js"></script>
-<script src="app/components/funcValidator.directive.js"></script>
-<script src="app/components/defaultTimeseriesDefinition.service.js"></script>
-<script src="app/timeseries/dividing.service.js"></script>
-<script src="app/timeseries/aggregating.service.js"></script>
-<script src="app/components/3dChart.directive.js"></script>
-<script src="app/components/dataConverterTo1D.service.js"></script>
+<script src="app/timeseries/TimeseriesUtil.service.js"></script>
+<script src="app/timeseries/Dividing.service.js"></script>
+<script src="app/timeseries/Aggregating.service.js"></script>
+<script src="app/chart/three-dim-chart.directive.js"></script>
+<script src="app/testcomponents/TestController.js"></script>
+<script src="app/testcomponents/DefaultTimeseriesDefinition.service.js"></script>
 
 </body>
 </html>
