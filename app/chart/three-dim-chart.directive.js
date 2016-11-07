@@ -172,7 +172,29 @@ angular.module('TimeseriesAnalysationTool')
                     return data;
                 }
 
+                scope.calculateRange = function (values) {
+                    if (angular.isArray(values[0])) {
+                        var mins = [];
+                        var maxs = [];
+
+                        for (var i = 0; i < values.length; i++) {
+                            mins.push(Math.min.apply(Math, values[i]));
+                            maxs.push(Math.max.apply(Math, values[i]));
+                        }
+
+                        scope.range[0] = Math.min.apply(Math, mins);
+                        scope.range[1] = Math.max.apply(Math, maxs);
+                    } else {
+                        scope.range[0] = Math.min.apply(Math, values);
+                        scope.range[1] = Math.max.apply(Math, values);
+                    }
+                    scope.currentMin = scope.range[0];
+                    scope.currentMax = scope.range[1];
+                };
+
                 scope.refresh = function () {
+                    scope.calculateRange(scope.timeseries.values);
+
                     Plotly.newPlot('plotly', [{
                         z: TimeseriesUtil.getRenderableValues(scope.timeseries),
                         type: 'surface'
