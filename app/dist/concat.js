@@ -11,11 +11,12 @@ angular.module('TimeseriesAnalysationTool')
             templateUrl: 'app/chart/three-dim-chart.html',
             restrict: 'E',
             scope: {
-                externData: '=data'
+                externData: '=data',
+                externOptions: '=options'
             },
             link: function (scope) {
 
-                scope.formatNumber = function(num) {
+                scope.formatNumber = function (num) {
                     return $filter('number')(num, 2);
                 };
 
@@ -51,36 +52,24 @@ angular.module('TimeseriesAnalysationTool')
                     }
                 };
 
+                scope.$watch('externOptions', function(o) {
+                    if (o && (scope.possibleColorscales.indexOf(o.initialcolorscale) !== -1)) {
+                        scope.initialcolorscale = o.initialcolorscale;
+                    }
+                });
+
                 scope.$watch('externData', function (newData) {
 
                     if (!newData) {
                         return;
                     }
 
-                    if (newData.type === 'function') {
-
-                        if (!angular.isString(newData.specs.funcTerm)) {
-                            throw 'Expected an String in specs.values but didn\'t find it!';
-                        }
-
-                        // Create DOM elements before function calculation freezes the webpage.
-                        $timeout(function() {
-                            scope.rawData = convertFromFunctionExpression(newData);
-                            scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
-                        });
-
-
-                    } else if (newData.type === 'array') {
-
-                        if (!angular.isArray(newData.specs.values)) {
-                            throw 'Expected an array in specs.values but didn\'t find it!';
-                        }
-
-                        scope.rawData = newData.specs.values;
-                        scope.timeseries = TimeseriesUtil.newTimeseries(newData.specs.startDate, newData.specs.stepLength, scope.rawData);
-                    } else {
-                        throw 'Unrecognized data type!';
+                    if (!angular.isArray(newData.values)) {
+                        throw 'Expected an array in `values` but didn\'t find it!';
                     }
+
+                    scope.rawData = newData.values;
+                    scope.timeseries = TimeseriesUtil.newTimeseries(newData.startDate, newData.stepLength, scope.rawData);
 
                     scope.range[0] = Math.min.apply(Math, scope.rawData);
                     scope.range[1] = Math.max.apply(Math, scope.rawData);
@@ -103,7 +92,7 @@ angular.module('TimeseriesAnalysationTool')
                     }
 
                     // reset timeseries every time 'scope.options' changes
-                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.externData.specs.startDate, scope.externData.specs.stepLength, scope.rawData);
+                    scope.timeseries = TimeseriesUtil.newTimeseries(scope.externData.startDate, scope.externData.stepLength, scope.rawData);
                     resetAxes();
 
                     if (oldOpt && newOpt.yaxis !== oldOpt.yaxis) {
@@ -167,20 +156,44 @@ angular.module('TimeseriesAnalysationTool')
                     return scope.possibleResolutions[i];
                 }
 
-                function convertFromFunctionExpression (surface) {
+                scope.resetSelection = function () {
+                    scope.options.yaxis = 'Original';
+                    scope.options.xaxis = undefined;
+                    scope.options.agg = undefined;
+                };
 
-                    var data = [];
-                    for (var x = 0; x < surface.specs.count; x++) {
-                        data.push(eval(surface.specs.funcTerm));
+                scope.calculateRange = function (values) {
+                    if (angular.isArray(values[0])) {
+                        var mins = [];
+                        var maxs = [];
+
+                        for (var i = 0; i < values.length; i++) {
+                            mins.push(Math.min.apply(Math, values[i]));
+                            maxs.push(Math.max.apply(Math, values[i]));
+                        }
+
+                        scope.range[0] = Math.min.apply(Math, mins);
+                        scope.range[1] = Math.max.apply(Math, maxs);
+                    } else {
+                        scope.range[0] = Math.min.apply(Math, values);
+                        scope.range[1] = Math.max.apply(Math, values);
                     }
-                    return data;
-                }
+                    scope.currentMin = scope.range[0];
+                    scope.currentMax = scope.range[1];
+                };
 
                 scope.refresh = function () {
+                    scope.calculateRange(scope.timeseries.values);
+
                     Plotly.newPlot('plotly', [{
                         z: TimeseriesUtil.getRenderableValues(scope.timeseries),
                         type: 'surface'
                     }], LAYOUT);
+
+                    if (scope.initialcolorscale) {
+                        scope.setColorscale(scope.initialcolorscale);
+                        scope.initialcolorscale = null;
+                    }
                 };
 
                 scope.getYAxisResolutionIndex = function () {
@@ -226,7 +239,7 @@ angular.module('TimeseriesAnalysationTool')
         };
     });
 
-angular.module('TimeseriesAnalysationTool').run(['$templateCache', function($templateCache) {$templateCache.put('app/chart/three-dim-chart.html','<div class="row">\n    <div id="plotly" class="col-md-6"></div>\n    <div class="col-md-2 col-md-offset-2">\n        <div class="form-group">\n            <label for="sel1">Y-Achsen Aufl\xF6sung:</label>\n            <select class="form-control" id="sel1" ng-model="options.yaxis">\n                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value && res.value"\n                        ng-value="res.text">{{res.text}}</option>\n            </select>\n        </div>\n        <div class="form-group">\n            <label for="sel2">X-Achsen Aggregation:</label>\n            <select class="form-control" id="sel2" ng-model="options.xaxis">\n                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value || $index > getYAxisResolutionIndex()"\n                        ng-value="res.text">{{res.text}}</option>\n            </select>\n        </div>\n        <div class="form-group">\n            <label for="sel3">Aggregationstyp:</label>\n            <select class="form-control" id="sel3" ng-model="options.agg" ng-disabled="!options.xaxis">\n                <option ng-repeat="agg in possibleAggregations">{{agg.text}}</option>\n            </select>\n        </div>\n        <hr>\n        <div class="form-group">\n            <label for="color">Farbskala:</label>\n            <select class="form-control" id="color" ng-model="color" ng-change="setColorscale(color)">\n                <option ng-repeat="c in possibleColorscales">{{c}}</option>\n            </select>\n        </div>\n\n        <div>\n            <label for="slider1" >Minimum: <i style="font-weight: normal">{{formatNumber(currentMin)}}</i>\n                <input id="slider1" type="range" min="{{range[0]}}" max="{{currentMax}}" step="{{(currentMax - range[0]) / 100}}"\n                       ng-model="currentMin"\n                       style="width:300px"\n                       ng-change="setMin(currentMin)">\n            </label>\n\n            <label for="slider2">Maximum: <i style="font-weight: normal">{{formatNumber(currentMax)}}</i>\n                <input id="slider2" type="range" min="{{currentMin}}" max="{{range[1]}}" step="{{(range[1] - currentMin) / 100}}"\n                       ng-model="currentMax"\n                       style="width:300px"\n                       ng-change="setMax(currentMax)">\n            </label>\n        </div>\n    </div>\n</div>\n\n\n\n');}]);
+angular.module('TimeseriesAnalysationTool').run(['$templateCache', function($templateCache) {$templateCache.put('app/chart/three-dim-chart.html','<div class="row">\n    <div id="plotly" class="col-md-6"></div>\n    <div class="col-md-2 col-md-offset-2">\n        <div class="form-group">\n            <label for="sel1">Y-Achsen Aufl\xF6sung:</label>\n            <select class="form-control" id="sel1" ng-model="options.yaxis" ng-disabled="options.xaxis">\n                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value && res.value"\n                        ng-value="res.text">{{res.text}}</option>\n            </select>\n        </div>\n        <div class="form-group">\n            <label for="sel2">X-Achsen Aggregation:</label>\n            <select class="form-control" id="sel2" ng-model="options.xaxis">\n                <option ng-repeat="res in possibleResolutions" ng-disabled="timeseries.stepLength > res.value || $index > getYAxisResolutionIndex()"\n                        ng-value="res.text">{{res.text}}</option>\n            </select>\n        </div>\n        <div class="form-group">\n            <label for="sel3">Aggregationstyp:</label>\n            <select class="form-control" id="sel3" ng-model="options.agg" ng-disabled="!options.xaxis">\n                <option ng-repeat="agg in possibleAggregations">{{agg.text}}</option>\n            </select>\n        </div>\n        <button class="btn btn-default" ng-click="resetSelection()">\n            Auswahl zur\xFCcksetzen\n        </button>\n        <hr ng-if="!externOptions || externOptions.colorscale || externOptions.colorrange">\n        <div class="form-group" ng-if="!externOptions || externOptions.colorscale">\n            <label for="color">Farbskala:</label>\n            <select class="form-control" id="color" ng-model="color" ng-change="setColorscale(color)">\n                <option ng-repeat="c in possibleColorscales">{{c}}</option>\n            </select>\n        </div>\n        <div ng-if="!externOptions || externOptions.colorrange">\n            <label for="slider1" >Minimum: <i style="font-weight: normal">{{formatNumber(currentMin)}}</i>\n                <input id="slider1" type="range" min="{{range[0]}}" max="{{currentMax}}" step="{{(currentMax - range[0]) / 100}}"\n                       ng-model="currentMin"\n                       style="width:300px"\n                       ng-change="setMin(currentMin)">\n            </label>\n\n            <label for="slider2">Maximum: <i style="font-weight: normal">{{formatNumber(currentMax)}}</i>\n                <input id="slider2" type="range" min="{{currentMin}}" max="{{range[1]}}" step="{{(range[1] - currentMin) / 100}}"\n                       ng-model="currentMax"\n                       style="width:300px"\n                       ng-change="setMax(currentMax)">\n            </label>\n        </div>\n    </div>\n</div>\n\n\n\n');}]);
 'use strict';
 
 /**
