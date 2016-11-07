@@ -6,4 +6,10 @@ angular.module('TimeseriesAnalysationTool').controller('TestController', ['$scop
         $scope.data = res;
     });
 
+    $scope.options = {
+        colorscale: true,
+        colorrange: true,
+        initialcolorscale: 'Greens'
+    }
+
 }]);

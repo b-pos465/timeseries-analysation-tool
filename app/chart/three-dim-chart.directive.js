@@ -7,7 +7,8 @@ angular.module('TimeseriesAnalysationTool')
             templateUrl: 'app/chart/three-dim-chart.html',
             restrict: 'E',
             scope: {
-                externData: '=data'
+                externData: '=data',
+                externOptions: '=options'
             },
             link: function (scope) {
 
@@ -46,6 +47,12 @@ angular.module('TimeseriesAnalysationTool')
                         xaxis: {}
                     }
                 };
+
+                scope.$watch('externOptions', function(o) {
+                    if (o && (scope.possibleColorscales.indexOf(o.initialcolorscale) !== -1)) {
+                        scope.initialcolorscale = o.initialcolorscale;
+                    }
+                });
 
                 scope.$watch('externData', function (newData) {
 
@@ -178,6 +185,11 @@ angular.module('TimeseriesAnalysationTool')
                         z: TimeseriesUtil.getRenderableValues(scope.timeseries),
                         type: 'surface'
                     }], LAYOUT);
+
+                    if (scope.initialcolorscale) {
+                        scope.setColorscale(scope.initialcolorscale);
+                        scope.initialcolorscale = null;
+                    }
                 };
 
                 scope.getYAxisResolutionIndex = function () {

@@ -24,14 +24,14 @@
         <button class="btn btn-default" ng-click="resetSelection()">
             Auswahl zurücksetzen
         </button>
-        <hr>
-        <div class="form-group">
+        <hr ng-if="!externOptions || externOptions.colorscale || externOptions.colorrange">
+        <div class="form-group" ng-if="!externOptions || externOptions.colorscale">
             <label for="color">Farbskala:</label>
             <select class="form-control" id="color" ng-model="color" ng-change="setColorscale(color)">
                 <option ng-repeat="c in possibleColorscales">{{c}}</option>
             </select>
         </div>
-        <div>
+        <div ng-if="!externOptions || externOptions.colorrange">
             <label for="slider1" >Minimum: <i style="font-weight: normal">{{formatNumber(currentMin)}}</i>
                 <input id="slider1" type="range" min="{{range[0]}}" max="{{currentMax}}" step="{{(currentMax - range[0]) / 100}}"
                        ng-model="currentMin"
