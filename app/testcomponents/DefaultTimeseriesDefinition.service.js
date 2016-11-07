@@ -12,8 +12,7 @@ angular.module('TimeseriesAnalysationTool').service('DefaultTimeseriesDefinition
             return {
                 startDate: new Date('1970-01-01'),
                 values: values,
-                stepLength: 900000,
-                count: values.length
+                stepLength: 900000
             }
         });
     };
