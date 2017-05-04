@@ -1,0 +1,18 @@
+{
+  "name": "timeseries-analysation-tool",
+  "description": "A 3D timeseries analysation tool.",
+  "version": "0.2.4",
+  "homepage": "",
+  "license": "MIT",
+  "private": false,
+  "main": [
+    "app/dist/concat-min.js"
+  ],
+  "dependencies": {
+    "angular": "~1.4.0",
+    "plotlyjs": "plotly#~1.18.1",
+    "bootstrap": "~3.3.6",
+    "jquery": "~2.2.0",
+    "lodash": "3.10.1"
+  }
+}
